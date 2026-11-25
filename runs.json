@@ -4,7 +4,8 @@
     {
       "game": "Heliopolis",
       "runner": "Zoink",
-      "target": "49%"
+      "target": "49%",
+      "live": true
     }
   ],
   "recentUpdates": [
