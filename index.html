@@ -120,7 +120,7 @@
 
     .run-card {
       display: grid;
-      grid-template-columns: 55px 1fr auto;
+      grid-template-columns: 1fr auto;
       align-items: center;
       gap: 18px;
       padding: 24px;
@@ -130,9 +130,9 @@
 
     .run-card:last-child { border-bottom: 0; }
     .run-card:hover { background: #141e27; }
-    .num { color: #80909c; font: 11px var(--mono); }
-    .game { font-size: clamp(21px, 3vw, 30px); font-weight: 700; letter-spacing: -.04em; }
+    .game { display: flex; align-items: center; font-size: clamp(21px, 3vw, 30px); font-weight: 700; letter-spacing: -.04em; }
     .runner { margin-top: 5px; color: var(--muted); font-size: 13px; }
+    .live-dot { width: 9px; height: 9px; margin-right: 10px; border-radius: 50%; background: #ff5964; box-shadow: 0 0 12px #ff596488; flex: 0 0 auto; }
     .target { text-align: right; font-size: clamp(30px, 4.5vw, 48px); font-weight: 800; letter-spacing: -.07em; }
     .target small { display: block; margin-top: 2px; color: var(--muted); font: 9px var(--mono); letter-spacing: .09em; }
     .empty { padding: 22px 24px; color: var(--muted); font-size: 14px; }
@@ -163,7 +163,7 @@
       .section { padding: 55px 0; }
       .section-head { align-items: start; gap: 12px; }
       .side-note { font-size: 8px; }
-      .run-card { grid-template-columns: 32px 1fr auto; gap: 11px; padding: 20px 14px; }
+      .run-card { grid-template-columns: 1fr auto; gap: 11px; padding: 20px 14px; }
       .updates { padding: 30px 22px 24px; }
       .updates-grid { grid-template-columns: 1fr; gap: 20px; padding: 28px 0; }
       .updates-title br { display: none; }
@@ -247,9 +247,11 @@
           runList.innerHTML = '<p class="empty">No XP drop targets yet. Add one in runs.json.</p>';
         }
 
-        runs.forEach((run, index) => {
+        const getPercentage = (target) => Number.parseFloat(String(target || '0')) || 0;
+        const sortedRuns = [...runs].sort((a, b) => getPercentage(b.target) - getPercentage(a.target));
+
+        sortedRuns.forEach((run) => {
           const card = document.createElement('article');
-          const number = document.createElement('span');
           const details = document.createElement('div');
           const game = document.createElement('div');
           const runner = document.createElement('div');
@@ -257,10 +259,18 @@
           const label = document.createElement('small');
 
           card.className = 'run-card';
-          number.className = 'num';
-          number.textContent = String(index + 1).padStart(2, '0');
           game.className = 'game';
           game.textContent = run.game || 'Untitled game';
+
+          if (run.live) {
+            const liveDot = document.createElement('span');
+            liveDot.className = 'live-dot';
+            liveDot.setAttribute('role', 'img');
+            liveDot.setAttribute('aria-label', 'Live');
+            liveDot.title = 'Live';
+            game.prepend(liveDot);
+          }
+
           runner.className = 'runner';
           runner.textContent = run.runner || 'Runner not set';
           details.append(game, runner);
@@ -268,7 +278,7 @@
           target.textContent = run.target || '—';
           label.textContent = 'TARGET';
           target.append(label);
-          card.append(number, details, target);
+          card.append(details, target);
           runList.append(card);
         });
 
