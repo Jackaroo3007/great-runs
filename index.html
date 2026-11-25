@@ -1,13 +1,303 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#090d12"><title>Great Runs — XP Drop Targets</title>
-<style>
-:root{color-scheme:dark;--ink:#edf2f4;--paper:#090d12;--panel:#101820;--panel-2:#131e27;--lime:#c9f36a;--teal:#70dfd1;--line:#263440;--muted:#93a1ad;--mono:ui-monospace,Consolas,monospace;--sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#17232e 0,transparent 55%),var(--paper);color:var(--ink);font-family:var(--sans);min-height:100vh}.shell{max-width:1180px;margin:auto;padding:0 6%}.topbar{height:76px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}.brand,.eyebrow,.meta,.kicker,footer{font-family:var(--mono);letter-spacing:.1em}.brand{font-size:11px;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:10px}.mark{display:grid;place-items:center;width:28px;height:28px;background:var(--lime);color:#111811;border-radius:8px;font:bold 14px var(--sans)}.meta,.eyebrow,.kicker,footer{font-size:10px}.meta{color:var(--muted)}.dot{display:inline-block;width:7px;height:7px;background:var(--lime);box-shadow:0 0 12px #c9f36a88;border-radius:50%;margin-right:8px}.hero{position:relative;isolation:isolate;overflow:hidden;min-height:430px;margin-top:34px;padding:58px 48px 28px;border:1px solid #344553;border-radius:18px;background:linear-gradient(135deg,#121c25 0%,#0d131a 62%,#17232a 100%);display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 22px 70px #0003}.hero:after{content:"";position:absolute;z-index:-1;width:320px;height:320px;right:6%;top:15%;border:1px solid #c9f36a25;border-radius:50%;box-shadow:0 0 0 26px #c9f36a08,0 0 0 52px #c9f36a05}.eyebrow{color:var(--muted);margin:0}.hero h1{font-size:clamp(76px,13vw,158px);line-height:.78;letter-spacing:-.09em;margin:30px 0;font-weight:800}.hero h1 span{color:var(--lime)}.intro{font-size:14px;line-height:1.8;color:#b4c0c9;margin:0}.hero-bottom{display:flex;justify-content:space-between;color:var(--muted);font:10px var(--mono);letter-spacing:.08em;padding-top:20px;border-top:1px solid #34424d}.section{padding:72px 0 80px}.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:26px}.section-head h2,.updates-title{font-size:clamp(32px,4.5vw,54px);letter-spacing:-.06em;margin:12px 0 0}.side-note{font:10px/1.8 var(--mono);color:var(--muted);text-align:right}.run-list{overflow:hidden;border:1px solid var(--line);border-radius:14px;background:#0d1319}.run-card{display:grid;grid-template-columns:55px 1fr auto;align-items:center;gap:18px;padding:24px 24px;border-bottom:1px solid var(--line);transition:background .2s}.run-card:last-child{border-bottom:0}.run-card:hover{background:#141e27}.num{font:11px var(--mono);color:#80909c}.game{font-size:clamp(21px,3vw,30px);font-weight:700;letter-spacing:-.04em}.runner{font-size:13px;color:var(--muted);margin-top:5px}.target{font-size:clamp(30px,4.5vw,48px);font-weight:800;letter-spacing:-.07em;color:var(--lime);text-align:right}.target small{display:block;font:9px var(--mono);letter-spacing:.09em;color:var(--muted);margin-top:2px}.empty{font-size:14px;color:var(--muted);padding:22px 24px}.updates{position:relative;overflow:hidden;border:1px solid #33464e;border-radius:18px;background:linear-gradient(135deg,#10191f,#0c1319 72%);padding:38px 40px 28px;box-shadow:0 20px 60px #0002}.kicker{display:flex;align-items:center;gap:13px;color:var(--lime)}.star{font-size:19px}.rule{height:1px;background:#35464e;flex:1}.updates-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:10%;padding:38px 0}.updates .eyebrow{color:var(--muted)}.updates-title{line-height:1;margin-top:15px}.updates-title span{color:var(--teal)}.update-list{border:1px solid var(--line);border-radius:12px;background:#0b1116;padding:0 18px}.update{display:grid;grid-template-columns:100px 1fr;gap:16px;padding:18px 0;border-bottom:1px solid var(--line)}.update:last-child{border-bottom:0}.date{font:10px var(--mono);color:var(--teal);padding-top:3px}.update-text{font-size:13px;line-height:1.7;color:#dbe3e8;margin:0}.hint{border-top:1px solid var(--line);padding-top:18px;color:var(--muted);font:10px var(--mono)}.hint code{color:var(--lime)}footer{min-height:78px;display:flex;justify-content:space-between;align-items:center;color:var(--muted)}.back{color:inherit;text-decoration:none}@media(max-width:650px){.shell{padding:0 5%}.hero{min-height:385px;padding:40px 25px 22px;margin-top:22px}.hero:after{width:210px;height:210px;right:-50px;top:25%}.hero-bottom{font-size:8px}.section{padding:55px 0}.section-head{align-items:start;gap:12px}.side-note{font-size:8px}.run-card{grid-template-columns:32px 1fr auto;gap:11px;padding:20px 14px}.updates{padding:30px 22px 24px}.updates-grid{grid-template-columns:1fr;gap:20px;padding:28px 0}.updates-title br{display:none}.update{grid-template-columns:76px 1fr;gap:12px}.update-list{padding:0 13px}footer{flex-wrap:wrap;gap:10px;padding:18px 0}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.run-card{transition:none}}
-</style></head><body><main class="shell">
-<header class="topbar"><a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS</a><span class="meta"><span class="dot"></span>XP DROP TARGETS</span></header>
-<section class="hero" id="top"><div><p class="eyebrow">THE DROP BOARD — RUN REQUIREMENTS</p><h1>GREAT<br><span>RUNS</span></h1><p class="intro">The runs needed to trigger an XP drop.<br>These are targets to reach, not completed runs.</p></div><div class="hero-bottom"><span>XP DROP REQUIREMENTS</span><span>SCROLL TO EXPLORE ↓</span></div></section>
-<section class="section" aria-labelledby="runs-heading"><div class="section-head"><div><p class="eyebrow">CURRENT TARGETS</p><h2 id="runs-heading">Runs to get<span id="run-count" class="eyebrow"></span></h2></div><p class="side-note">Reach these run goals<br>to trigger an XP drop.</p></div><div class="run-list" id="run-list"><p class="empty">Loading targets…</p></div></section>
-<section class="updates" aria-labelledby="updates-heading"><div class="kicker"><span class="star">✳</span><span>WHAT'S NEW</span><span class="rule"></span></div><div class="updates-grid"><div><p class="eyebrow">THE LATEST</p><h2 id="updates-heading" class="updates-title">Recent<br>updates<span>.</span></h2></div><div class="update-list" id="update-list"><p class="empty">Loading updates…</p></div></div><p class="hint">Change targets and updates by editing <code>runs.json</code>.</p></section>
-<footer><a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS</a><span>XP DROP TARGETS</span><a class="back" href="#top">BACK TO TOP ↑</a></footer></main>
-<script>
-async function loadBoard(){const runs=document.querySelector('#run-list'),updates=document.querySelector('#update-list');try{const response=await fetch('./runs.json',{cache:'no-store'});if(!response.ok)throw new Error();const data=await response.json(),items=Array.isArray(data.runs)?data.runs:[];document.title=(data.title||'Great Runs')+' — XP Drop Targets';document.querySelector('#run-count').textContent='  '+String(items.length).padStart(2,'0');runs.replaceChildren();if(!items.length)runs.innerHTML='<p class="empty">No XP drop targets yet. Add one in runs.json.</p>';items.forEach((run,i)=>{const card=document.createElement('article');card.className='run-card';const n=document.createElement('span');n.className='num';n.textContent=String(i+1).padStart(2,'0');const detail=document.createElement('div'),game=document.createElement('div'),runner=document.createElement('div');game.className='game';game.textContent=run.game||'Untitled game';runner.className='runner';runner.textContent=run.runner||'Runner not set';detail.append(game,runner);const target=document.createElement('div'),label=document.createElement('small');target.className='target';target.textContent=run.target||'—';label.textContent='TARGET';target.append(label);card.append(n,detail,target);runs.append(card)});updates.replaceChildren();(Array.isArray(data.recentUpdates)?data.recentUpdates:[]).forEach(entry=>{const row=document.createElement('article'),date=document.createElement('time'),text=document.createElement('p');row.className='update';date.className='date';date.dateTime=entry.date||'';date.textContent=entry.date||'RECENT';text.className='update-text';text.textContent=entry.text||'Update';row.append(date,text);updates.append(row)});if(!updates.childElementCount)updates.innerHTML='<p class="empty">No recent updates yet.</p>'}catch(error){runs.innerHTML='<p class="empty">Could not load runs.json. Check the JSON format.</p>';updates.replaceChildren()}}loadBoard();
-</script></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090d12">
+  <title>Great Runs — XP Drop Targets</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #edf2f4;
+      --paper: #090d12;
+      --lime: #c9f36a;
+      --teal: #70dfd1;
+      --line: #263440;
+      --muted: #93a1ad;
+      --mono: ui-monospace, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: radial-gradient(ellipse at 50% -20%, #17232e 0, transparent 55%), var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .shell { max-width: 1180px; margin: 0 auto; padding: 0 6%; }
+
+    .topbar, footer {
+      display: flex;
+      min-height: 76px;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand, .eyebrow, .meta, .kicker, footer {
+      font-family: var(--mono);
+      letter-spacing: .1em;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      font-size: 11px;
+      text-decoration: none;
+    }
+
+    .mark {
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--lime);
+      color: #111811;
+      font: bold 14px Inter, sans-serif;
+    }
+
+    .meta, .eyebrow, .kicker, footer { font-size: 10px; }
+    .meta, .eyebrow, footer { color: var(--muted); }
+    .dot { display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 12px #c9f36a88; }
+
+    .hero, .updates {
+      border: 1px solid #344553;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #121c25, #0d131a 65%, #17232a);
+      box-shadow: 0 22px 70px #0003;
+    }
+
+    .hero {
+      display: flex;
+      min-height: 360px;
+      margin-top: 34px;
+      padding: 58px 48px 28px;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .eyebrow { margin: 0; }
+
+    .hero h1 {
+      margin: 34px 0;
+      font-size: clamp(64px, 11vw, 136px);
+      font-weight: 800;
+      letter-spacing: -.085em;
+      line-height: .95;
+      white-space: nowrap;
+    }
+
+    .hero h1 span, .target { color: var(--lime); }
+    .intro { margin: 0; color: #b4c0c9; font-size: 14px; line-height: 1.8; }
+
+    .hero-bottom {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 20px;
+      border-top: 1px solid #34424d;
+      color: var(--muted);
+      font: 10px var(--mono);
+      letter-spacing: .08em;
+    }
+
+    .section { padding: 72px 0 80px; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; margin-bottom: 26px; }
+    .section-head h2, .updates-title { margin: 12px 0 0; font-size: clamp(32px, 4.5vw, 54px); letter-spacing: -.06em; }
+    .side-note { color: var(--muted); font: 10px/1.8 var(--mono); text-align: right; }
+
+    .run-list, .update-list {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #0d1319;
+    }
+
+    .run-card {
+      display: grid;
+      grid-template-columns: 55px 1fr auto;
+      align-items: center;
+      gap: 18px;
+      padding: 24px;
+      border-bottom: 1px solid var(--line);
+      transition: background .2s;
+    }
+
+    .run-card:last-child { border-bottom: 0; }
+    .run-card:hover { background: #141e27; }
+    .num { color: #80909c; font: 11px var(--mono); }
+    .game { font-size: clamp(21px, 3vw, 30px); font-weight: 700; letter-spacing: -.04em; }
+    .runner { margin-top: 5px; color: var(--muted); font-size: 13px; }
+    .target { text-align: right; font-size: clamp(30px, 4.5vw, 48px); font-weight: 800; letter-spacing: -.07em; }
+    .target small { display: block; margin-top: 2px; color: var(--muted); font: 9px var(--mono); letter-spacing: .09em; }
+    .empty { padding: 22px 24px; color: var(--muted); font-size: 14px; }
+
+    .updates { padding: 38px 40px 28px; }
+    .kicker { display: flex; align-items: center; gap: 13px; color: var(--lime); }
+    .star { font-size: 19px; }
+    .rule { height: 1px; flex: 1; background: #35464e; }
+    .updates-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 10%; padding: 38px 0; }
+    .updates-title { margin-top: 15px; line-height: 1; }
+    .updates-title span, .date { color: var(--teal); }
+    .update-list { padding: 0 18px; }
+    .update { display: grid; grid-template-columns: 100px 1fr; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .update:last-child { border-bottom: 0; }
+    .date { padding-top: 3px; font: 10px var(--mono); }
+    .update-text { margin: 0; color: #dbe3e8; font-size: 13px; line-height: 1.7; }
+    .hint { padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: 10px var(--mono); }
+    .hint code { color: var(--lime); }
+
+    footer { min-height: 78px; border: 0; }
+    .back { color: inherit; text-decoration: none; }
+
+    @media (max-width: 650px) {
+      .shell { padding: 0 5%; }
+      .hero { min-height: 340px; margin-top: 22px; padding: 40px 24px 22px; }
+      .hero h1 { font-size: clamp(48px, 12vw, 78px); }
+      .hero-bottom { font-size: 8px; }
+      .section { padding: 55px 0; }
+      .section-head { align-items: start; gap: 12px; }
+      .side-note { font-size: 8px; }
+      .run-card { grid-template-columns: 32px 1fr auto; gap: 11px; padding: 20px 14px; }
+      .updates { padding: 30px 22px 24px; }
+      .updates-grid { grid-template-columns: 1fr; gap: 20px; padding: 28px 0; }
+      .updates-title br { display: none; }
+      .update { grid-template-columns: 76px 1fr; gap: 12px; }
+      .update-list { padding: 0 13px; }
+      footer { flex-wrap: wrap; gap: 10px; padding: 18px 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .run-card { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS</a>
+      <span class="meta"><span class="dot"></span>XP DROP TARGETS</span>
+    </header>
+
+    <section class="hero" id="top">
+      <div>
+        <p class="eyebrow">THE DROP BOARD — RUN REQUIREMENTS</p>
+        <h1>GREAT <span>RUNS</span></h1>
+        <p class="intro">The runs needed to trigger an XP drop.<br>These are targets to reach, not completed runs.</p>
+      </div>
+      <div class="hero-bottom">
+        <span>XP DROP REQUIREMENTS</span>
+        <span>SCROLL TO EXPLORE ↓</span>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="runs-heading">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">CURRENT TARGETS</p>
+          <h2 id="runs-heading">Runs to get<span id="run-count" class="eyebrow"></span></h2>
+        </div>
+        <p class="side-note">Reach these run goals<br>to trigger an XP drop.</p>
+      </div>
+      <div class="run-list" id="run-list"><p class="empty">Loading targets…</p></div>
+    </section>
+
+    <section class="updates" aria-labelledby="updates-heading">
+      <div class="kicker"><span class="star">✳</span><span>WHAT'S NEW</span><span class="rule"></span></div>
+      <div class="updates-grid">
+        <div>
+          <p class="eyebrow">THE LATEST</p>
+          <h2 id="updates-heading" class="updates-title">Recent<br>updates<span>.</span></h2>
+        </div>
+        <div class="update-list" id="update-list"><p class="empty">Loading updates…</p></div>
+      </div>
+      <p class="hint">Change targets and updates by editing <code>runs.json</code>.</p>
+    </section>
+
+    <footer>
+      <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS</a>
+      <span>XP DROP TARGETS</span>
+      <a class="back" href="#top">BACK TO TOP ↑</a>
+    </footer>
+  </main>
+
+  <script>
+    async function loadBoard() {
+      const runList = document.querySelector('#run-list');
+      const updateList = document.querySelector('#update-list');
+
+      try {
+        const response = await fetch('./runs.json', { cache: 'no-store' });
+        if (!response.ok) throw new Error('Could not load runs.json');
+
+        const data = await response.json();
+        const runs = Array.isArray(data.runs) ? data.runs : [];
+        const updates = Array.isArray(data.recentUpdates) ? data.recentUpdates : [];
+
+        document.title = (data.title || 'Great Runs') + ' — XP Drop Targets';
+        document.querySelector('#run-count').textContent = '  ' + String(runs.length).padStart(2, '0');
+
+        runList.replaceChildren();
+        if (!runs.length) {
+          runList.innerHTML = '<p class="empty">No XP drop targets yet. Add one in runs.json.</p>';
+        }
+
+        runs.forEach((run, index) => {
+          const card = document.createElement('article');
+          const number = document.createElement('span');
+          const details = document.createElement('div');
+          const game = document.createElement('div');
+          const runner = document.createElement('div');
+          const target = document.createElement('div');
+          const label = document.createElement('small');
+
+          card.className = 'run-card';
+          number.className = 'num';
+          number.textContent = String(index + 1).padStart(2, '0');
+          game.className = 'game';
+          game.textContent = run.game || 'Untitled game';
+          runner.className = 'runner';
+          runner.textContent = run.runner || 'Runner not set';
+          details.append(game, runner);
+          target.className = 'target';
+          target.textContent = run.target || '—';
+          label.textContent = 'TARGET';
+          target.append(label);
+          card.append(number, details, target);
+          runList.append(card);
+        });
+
+        updateList.replaceChildren();
+        updates.forEach((entry) => {
+          const row = document.createElement('article');
+          const date = document.createElement('time');
+          const text = document.createElement('p');
+
+          row.className = 'update';
+          date.className = 'date';
+          date.dateTime = entry.date || '';
+          date.textContent = entry.date || 'RECENT';
+          text.className = 'update-text';
+          text.textContent = entry.text || 'Update';
+          row.append(date, text);
+          updateList.append(row);
+        });
+
+        if (!updateList.childElementCount) {
+          updateList.innerHTML = '<p class="empty">No recent updates yet.</p>';
+        }
+      } catch (error) {
+        runList.innerHTML = '<p class="empty">Could not load runs.json. Check the JSON format.</p>';
+        updateList.replaceChildren();
+      }
+    }
+
+    loadBoard();
+  </script>
+</body>
+</html>
