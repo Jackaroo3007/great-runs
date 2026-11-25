@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101512">
+  <title>Great Runs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page-shell">
+    <header class="topbar">
+      <a class="wordmark" href="#top" aria-label="Great Runs home"><span class="wordmark-mark">G</span> RUN ARCHIVE</a>
+      <span class="live-label"><span class="live-dot"></span> COMMUNITY RECORDS</span>
+    </header>
+    <section class="hero" id="top">
+      <div class="hero-copy">
+        <p class="eyebrow">THE RUN BOARD <span>—</span> EST. 2026</p>
+        <h1>GREAT<br><span>RUNS</span><sup>01</sup></h1>
+        <p class="hero-note">A home for the runs worth remembering.<br>Every game. Every runner. Every milestone.</p>
+      </div>
+      <div class="hero-stamp" aria-hidden="true"><span>RUN</span><strong>★</strong><span>IT BACK</span></div>
+      <div class="hero-bottom"><span>01 / CURRENT HIGHLIGHTS</span><span>SCROLL TO EXPLORE ↓</span></div>
+    </section>
+    <section class="runs-section" aria-labelledby="runs-heading">
+      <div class="section-heading">
+        <div><p class="eyebrow">THE HALL OF GREAT</p><h2 id="runs-heading">Featured runs<span class="heading-count" id="run-count">—</span></h2></div>
+        <p class="section-aside">Records, milestones<br>&amp; standout attempts.</p>
+      </div>
+      <div class="run-list" id="run-list" aria-live="polite"><p class="loading">Loading runs…</p></div>
+    </section>
+    <section class="updates-section" aria-labelledby="updates-heading">
+      <div class="updates-kicker"><span class="updates-star">✳</span><span>WHAT'S NEW</span><span class="updates-line"></span></div>
+      <div class="updates-content">
+        <div><p class="eyebrow">THE LATEST</p><h2 id="updates-heading">Recent<br>updates<span>.</span></h2></div>
+        <div class="updates-list" id="updates-list" aria-live="polite"><p class="loading">Loading updates…</p></div>
+      </div>
+      <p class="edit-hint">To update this page, edit <code>runs.json</code>.</p>
+    </section>
+    <footer><a class="wordmark" href="#top"><span class="wordmark-mark">G</span> GREAT RUNS</a><span>KEEP MAKING HISTORY <span class="footer-star">✳</span></span><a class="back-top" href="#top">BACK TO TOP ↑</a></footer>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
