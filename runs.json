@@ -9,6 +9,19 @@
     }
   ],
   "recentUpdates": [
+    {
+      "date": "2026-11-26",
+      "text": [
+        "v0.2.3 is here! Update your page by refreshing! What we added:",
+        "Support for Multi-line text!",
+        "New Announcement Titles!"
+      ]
+      "title": "UPDATE: v0.2.3"
+    },
+    {
+      "date": "2026-11-26",
+      "text": "v0.2.2 is here! Update your page by refreshing! What we added: Highlights to recent announcements!"
+    },
      {
       "date": "2026-11-26",
       "text": "Heliopolis XP drop target for Zoink: 44% -> 40%."
