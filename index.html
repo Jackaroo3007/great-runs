@@ -623,7 +623,7 @@
   <body>
     <main class="shell">
       <header class="topbar">
-        <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.3.0</a>
+        <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.3.1</a>
         <span class="meta"><span class="dot"></span>XP DROP TARGETS</span>
       </header>
 
@@ -725,7 +725,7 @@
       </section>
   
       <footer>
-        <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.3.0</a>
+        <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.3.1</a>
         <span>XP DROP TARGETS</span>
         <a class="back" href="#top">BACK TO TOP ↑</a>
       </footer>
@@ -816,11 +816,12 @@
           const announcementPercent = announcement.percentage === undefined || announcement.percentage === null || announcement.percentage === ''
             ? null
             : Number(announcement.percentage);
-          const hasAnnouncementPercent = Number.isFinite(announcementPercent);
+          const announcementEnabled = announcement.enabled !== false;
+      const hasAnnouncementPercent = Number.isFinite(announcementPercent);
           const hasAnnouncementText = Boolean(announcementText.trim());
           const announcementBanner = document.querySelector('#announcement-banner');
           const announcementPercentElement = document.querySelector('#announcement-percent');
-          announcementBanner.hidden = !hasAnnouncementText && !hasAnnouncementPercent;
+          announcementBanner.hidden = !announcementEnabled || (!hasAnnouncementText && !hasAnnouncementPercent);
           announcementBanner.classList.toggle('has-message', hasAnnouncementText);
           announcementBanner.classList.toggle('has-percentage', hasAnnouncementPercent);
           announcementBanner.style.setProperty('--announcement-color', /^#[0-9a-f]{6}$/i.test(announcement.color || '') ? announcement.color : '#ff5d9d');
