@@ -155,11 +155,11 @@
       .update-view-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
       .view-switch, .page-controls { display: flex; align-items: center; gap: 6px; }
       .page-controls[hidden] { display: none; }
-      .view-button, .page-button { border: 1px solid var(--line); border-radius: 8px; background: #0d1319; color: var(--muted); font: 10px var(--mono); cursor: pointer; }
-      .view-button { padding: 9px 13px; }
-      .page-button { width: 34px; height: 32px; font-size: 15px; }
-      .view-button:hover, .page-button:hover:not(:disabled), .view-button.active { border-color: var(--lime); color: var(--lime); }
-      .page-button:disabled { opacity: .35; cursor: default; }
+      .view-button, .page-button, .change-view-button, .change-page-button { border: 1px solid var(--line); border-radius: 8px; background: #0d1319; color: var(--muted); font: 10px var(--mono); cursor: pointer; }
+      .view-button, .change-view-button { padding: 9px 13px; }
+      .page-button, .change-page-button { width: 34px; height: 32px; font-size: 15px; }
+      .view-button:hover, .page-button:hover:not(:disabled), .view-button.active, .change-view-button:hover, .change-page-button:hover:not(:disabled), .change-view-button.active { border-color: var(--lime); color: var(--lime); }
+      .page-button:disabled, .change-page-button:disabled { opacity: .35; cursor: default; }
       .page-number { min-width: 48px; color: var(--muted); font: 10px var(--mono); text-align: center; }
       .update-list { max-height: 430px; overflow-y: auto; padding: 0 18px; scrollbar-color: #40515d #0d1319; }
       .update-list.paged { max-height: none; overflow: hidden; }
@@ -354,7 +354,7 @@
       .update-new { border-left-color: var(--lime); background: linear-gradient(90deg, #ff4d871c, transparent 80%); }
       .update-new .date::after { color: var(--lime); }
   
-      .view-button, .page-button {
+      .view-button, .page-button, .change-view-button, .change-page-button {
         border: 2px solid #203958;
         border-radius: 2px;
         background: #0d1930;
@@ -362,8 +362,8 @@
         font-family: var(--mono);
         letter-spacing: .12em;
       }
-      .view-button.active { border-color: var(--lime); color: var(--lime); background: #111e38; }
-      .view-button:hover, .page-button:hover:not(:disabled) { border-color: var(--teal); color: var(--teal); }
+      .view-button.active, .change-view-button.active { border-color: var(--lime); color: var(--lime); background: #111e38; }
+      .view-button:hover, .page-button:hover:not(:disabled), .change-view-button:hover, .change-page-button:hover:not(:disabled) { border-color: var(--teal); color: var(--teal); }
       .page-number { color: #86a9df; font-family: var(--mono); }
   
       @media (max-width: 650px) {
@@ -377,7 +377,7 @@
       }
   
       @media (prefers-reduced-motion: reduce) {
-        .run-card, .live-card, .view-button, .page-button { transition: none; }
+        .run-card, .live-card, .view-button, .page-button, .change-view-button, .change-page-button { transition: none; }
       }
   
   
@@ -708,6 +708,17 @@
           </div>
           <p class="side-note">A separate record of<br>XP drop target changes.</p>
         </div>
+        <div class="update-view-controls" aria-label="Percentage change view">
+          <div class="view-switch" role="group" aria-label="Choose percentage change layout">
+            <button class="change-view-button" type="button" data-change-view="scroll" aria-pressed="false">Scroll</button>
+            <button class="change-view-button active" type="button" data-change-view="pages" aria-pressed="true">Pages</button>
+          </div>
+          <div class="page-controls" id="change-page-controls">
+            <button class="change-page-button" id="previous-change-page" type="button" aria-label="Previous percentage changes page">←</button>
+            <span class="page-number" id="change-page-number">1 / 1</span>
+            <button class="change-page-button" id="next-change-page" type="button" aria-label="Next percentage changes page">→</button>
+          </div>
+        </div>
         <div class="update-list" id="percentage-change-list"><p class="empty">Loading percentage changes…</p></div>
       </section>
 
@@ -930,11 +941,22 @@
           });
   
           percentageChangeList.replaceChildren();
-          if (!percentageChanges.length) {
+          const changePageCount = Math.max(1, Math.ceil(percentageChanges.length / percentageChangesPerPage));
+          percentageChangePage = Math.min(percentageChangePage, changePageCount - 1);
+          const visiblePercentageChanges = percentageChangeViewMode === 'pages'
+            ? percentageChanges.slice(percentageChangePage * percentageChangesPerPage, (percentageChangePage + 1) * percentageChangesPerPage)
+            : percentageChanges;
+          percentageChangeList.classList.toggle('paged', percentageChangeViewMode === 'pages');
+          changePageControls.hidden = percentageChangeViewMode !== 'pages';
+          changePageNumber.textContent = percentageChanges.length ? (percentageChangePage + 1) + ' / ' + changePageCount : '0 / 0';
+          previousChangePage.disabled = percentageChangePage <= 0 || percentageChanges.length === 0;
+          nextChangePage.disabled = percentageChangePage >= changePageCount - 1 || percentageChanges.length === 0;
+
+          if (!visiblePercentageChanges.length) {
             percentageChangeList.innerHTML = '<p class="empty">No percentage changes yet.</p>';
           }
 
-          percentageChanges.forEach((entry) => {
+          visiblePercentageChanges.forEach((entry) => {
             const row = document.createElement('article');
             const date = document.createElement('time');
             const content = document.createElement('div');
@@ -1020,11 +1042,19 @@
           runList.innerHTML = '<p class="empty">Could not load runs.json. Check the JSON format.</p>';
           liveSection.hidden = true;
           updateList.replaceChildren();
+          percentageChangeList.replaceChildren();
         }
       }
   
       let updateViewMode = 'pages';
       let updatePage = 0;
+      let percentageChangeViewMode = 'pages';
+      let percentageChangePage = 0;
+      const percentageChangesPerPage = 5;
+      const changePageControls = document.querySelector('#change-page-controls');
+      const changePageNumber = document.querySelector('#change-page-number');
+      const previousChangePage = document.querySelector('#previous-change-page');
+      const nextChangePage = document.querySelector('#next-change-page');
       const updatesPerPage = 1;
       const pageControls = document.querySelector('#page-controls');
       const pageNumber = document.querySelector('#page-number');
@@ -1054,6 +1084,29 @@
         loadBoard();
       });
   
+      document.querySelectorAll('.change-view-button').forEach((button) => {
+        button.addEventListener('click', () => {
+          percentageChangeViewMode = button.dataset.changeView;
+          percentageChangePage = 0;
+          document.querySelectorAll('.change-view-button').forEach((viewButton) => {
+            const selected = viewButton === button;
+            viewButton.classList.toggle('active', selected);
+            viewButton.setAttribute('aria-pressed', String(selected));
+          });
+          loadBoard();
+        });
+      });
+
+      previousChangePage.addEventListener('click', () => {
+        percentageChangePage = Math.max(0, percentageChangePage - 1);
+        loadBoard();
+      });
+
+      nextChangePage.addEventListener('click', () => {
+        percentageChangePage += 1;
+        loadBoard();
+      });
+
       loadBoard();
       let previousUpdateKeys = null;
       let updateRefreshCycle = 0;
