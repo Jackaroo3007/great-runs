@@ -423,6 +423,149 @@
         .stream-link { font-size: 8px; }
       }
   
+
+
+      /* Compact arcade dashboard */
+      .hero {
+        min-height: 0;
+        margin-top: 24px;
+        padding: 28px 30px 20px;
+        gap: 24px;
+        border: 2px solid #31527a;
+        background: linear-gradient(145deg, #0d1b35 0%, #10172f 58%, #191b3a 100%);
+        box-shadow: 0 10px 0 #050b18, inset 0 0 0 3px #080f20, 0 0 32px #438dff12;
+      }
+      .hero-heading { position: relative; }
+      .hero-heading::after {
+        content: 'SYSTEM READY';
+        position: absolute;
+        top: 1px;
+        right: 0;
+        color: #72e6c2;
+        font: 700 9px var(--mono);
+        letter-spacing: .16em;
+      }
+      .hero h1 {
+        margin: 16px 0 10px;
+        font-size: clamp(38px, 6vw, 66px);
+        line-height: 1;
+        letter-spacing: -.07em;
+      }
+      .hero h1 span { color: #ff5d9d; text-shadow: 0 0 20px #ff4c881c; }
+      .intro { font-size: 12px; line-height: 1.7; }
+      .dashboard-tiles {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .dashboard-tile {
+        --tile-accent: #70aaff;
+        position: relative;
+        min-height: 128px;
+        display: grid;
+        grid-template-columns: 38px 1fr auto;
+        grid-template-rows: auto 1fr auto;
+        align-items: center;
+        column-gap: 12px;
+        padding: 15px 18px;
+        overflow: hidden;
+        border: 2px solid #29456e;
+        border-radius: 4px;
+        background: linear-gradient(135deg, #111f3c, #0b1730 72%);
+        box-shadow: inset 0 0 0 3px #080f20, 0 5px 0 #060d1b;
+        color: var(--ink);
+        text-decoration: none;
+        transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+      }
+      .dashboard-tile::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 34px;
+        height: 34px;
+        border-top: 2px solid var(--tile-accent);
+        border-right: 2px solid var(--tile-accent);
+        opacity: .7;
+      }
+      .dashboard-tile:hover, .dashboard-tile:focus-visible {
+        z-index: 1;
+        transform: translateY(-3px);
+        border-color: var(--tile-accent);
+        background: linear-gradient(135deg, #182b50, #111c39 72%);
+        box-shadow: inset 0 0 0 3px #080f20, 0 8px 0 #060d1b, 0 0 22px color-mix(in srgb, var(--tile-accent) 18%, transparent);
+        outline: none;
+      }
+      .tile-targets { --tile-accent: #ff5d9d; }
+      .tile-live { --tile-accent: #ff5964; }
+      .tile-updates { --tile-accent: #ffd166; }
+      .tile-scan { --tile-accent: #70e4ce; }
+      .tile-icon {
+        grid-column: 1;
+        grid-row: 1 / 4;
+        width: 38px;
+        height: 38px;
+        display: grid;
+        place-items: center;
+        border: 1px solid color-mix(in srgb, var(--tile-accent) 65%, #203958);
+        border-radius: 10px 4px 10px 4px;
+        background: color-mix(in srgb, var(--tile-accent) 10%, #0b1730);
+        color: var(--tile-accent);
+        font: 700 23px/1 var(--mono);
+        text-shadow: 0 0 12px color-mix(in srgb, var(--tile-accent) 60%, transparent);
+      }
+      .live-icon { font-size: 13px; }
+      .tile-label {
+        grid-column: 2 / 4;
+        color: var(--tile-accent);
+        font: 700 10px var(--mono);
+        letter-spacing: .15em;
+      }
+      .dashboard-tile strong {
+        grid-column: 2;
+        align-self: end;
+        color: #edf3ff;
+        font: 800 28px/1.1 var(--mono);
+        letter-spacing: -.06em;
+      }
+      .tile-note {
+        grid-column: 2 / 4;
+        align-self: start;
+        color: #91a9d0;
+        font: 9px/1.4 var(--mono);
+        letter-spacing: .04em;
+      }
+      .tile-arrow {
+        grid-column: 3;
+        grid-row: 2;
+        align-self: end;
+        color: var(--tile-accent);
+        font-size: 18px;
+      }
+      .tile-scan strong { font-size: 24px; letter-spacing: .02em; }
+      .status-online { margin-left: 8px; color: #70e4ce; }
+      .hero-bottom { padding-top: 14px; border-color: #29456e; font-size: 9px; }
+      .section { scroll-margin-top: 18px; }
+      .live-section { scroll-margin-top: 18px; }
+      .updates { scroll-margin-top: 18px; }
+      @media (max-width: 650px) {
+        .hero { margin-top: 18px; padding: 22px 16px 16px; gap: 18px; }
+        .hero-heading::after { position: static; display: block; margin-top: 8px; }
+        .hero h1 { margin: 12px 0 8px; font-size: clamp(36px, 10vw, 56px); }
+        .dashboard-tiles { gap: 8px; }
+        .dashboard-tile { min-height: 112px; grid-template-columns: 28px 1fr auto; column-gap: 8px; padding: 12px 9px; }
+        .tile-icon { width: 28px; height: 28px; font-size: 18px; border-radius: 8px 3px; }
+        .tile-label { font-size: 8px; letter-spacing: .1em; }
+        .dashboard-tile strong { font-size: 23px; }
+        .tile-scan strong { font-size: 19px; }
+        .tile-note { font-size: 7px; }
+        .tile-arrow { font-size: 15px; }
+        .hero-bottom { gap: 10px; font-size: 7px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .dashboard-tile { transition: none; }
+      }
+
     </style>
   </head>
   <body>
@@ -433,14 +576,43 @@
       </header>
   
       <section class="hero" id="top">
-        <div>
-          <p class="eyebrow">THE DROP BOARD — RUN REQUIREMENTS</p>
+        <div class="hero-heading">
+          <p class="eyebrow">XP DROP CONTROL // RUN REQUIREMENTS</p>
           <h1>GREAT <span>RUNS</span></h1>
-          <p class="intro">The runs needed to trigger an XP drop.<br>These are targets to reach, not completed runs.</p>
+          <p class="intro">Track the goals that trigger an XP drop.<br>These are targets to reach, not completed runs.</p>
         </div>
+        <nav class="dashboard-tiles" aria-label="Great Runs dashboard">
+          <a class="dashboard-tile tile-targets" href="#runs">
+            <span class="tile-icon" aria-hidden="true">↓</span>
+            <span class="tile-label">DROP TARGETS</span>
+            <strong id="tile-target-count">—</strong>
+            <span class="tile-note">XP goals on the board</span>
+            <span class="tile-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="dashboard-tile tile-live" href="#live-section">
+            <span class="tile-icon live-icon" aria-hidden="true">●</span>
+            <span class="tile-label">LIVE FEED</span>
+            <strong id="tile-live-count">—</strong>
+            <span class="tile-note">Runs marked live right now</span>
+            <span class="tile-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="dashboard-tile tile-updates" href="#updates">
+            <span class="tile-icon" aria-hidden="true">✳</span>
+            <span class="tile-label">UPDATE LOGS</span>
+            <strong id="tile-update-count">—</strong>
+            <span class="tile-note">Recent board changes</span>
+            <span class="tile-arrow" aria-hidden="true">↗</span>
+          </a>
+          <div class="dashboard-tile tile-scan" aria-label="Automatic refresh countdown">
+            <span class="tile-icon" aria-hidden="true">↻</span>
+            <span class="tile-label">NEXT BOARD SCAN</span>
+            <strong id="tile-refresh-countdown">00:15</strong>
+            <span class="tile-note">Automatic live data check</span>
+          </div>
+        </nav>
         <div class="hero-bottom">
-          <span>XP DROP REQUIREMENTS</span>
-          <span>SCROLL TO EXPLORE ↓</span>
+          <span>BOARD STATUS <span class="status-online">● ONLINE</span></span>
+          <span>SELECT A PANEL TO EXPLORE ↓</span>
         </div>
       </section>
   
@@ -455,7 +627,7 @@
         <div class="live-grid" id="live-grid"></div>
       </section>
   
-      <section class="section" aria-labelledby="runs-heading">
+      <section class="section" id="runs" aria-labelledby="runs-heading">
         <div class="section-head">
           <div>
             <p class="eyebrow">CURRENT TARGETS</p>
@@ -467,7 +639,7 @@
         <div class="run-list" id="run-list"><p class="empty">Loading targets…</p></div>
       </section>
   
-      <section class="updates" aria-labelledby="updates-heading">
+      <section class="updates" id="updates" aria-labelledby="updates-heading">
         <div class="kicker"><span class="star">✳</span><span>WHAT'S NEW</span><span class="rule"></span></div>
         <div class="updates-grid">
           <div>
@@ -580,6 +752,9 @@
           const sortedRuns = [...runs].sort((a, b) => getPercentage(b.target) - getPercentage(a.target));
           const liveRuns = sortedRuns.filter((run) => run.live);
           boardSummary.textContent = runs.length + (runs.length === 1 ? ' XP DROP TARGET' : ' XP DROP TARGETS') + ' · ' + liveRuns.length + ' LIVE';
+          document.querySelector('#tile-target-count').textContent = String(runs.length).padStart(2, '0');
+          document.querySelector('#tile-live-count').textContent = String(liveRuns.length).padStart(2, '0');
+          document.querySelector('#tile-update-count').textContent = String(updates.length).padStart(2, '0');
   
           document.title = (data.title || 'Great Runs') + ' — XP Drop Targets';
           document.querySelector('#run-count').textContent = '  ' + String(runs.length).padStart(2, '0');
@@ -783,7 +958,9 @@
       function formatRefreshCountdown() {
         const minutes = Math.floor(refreshCountdownSeconds / 60);
         const seconds = refreshCountdownSeconds % 60;
-        refreshTimer.textContent = 'REFRESH IN ' + String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+        const countdown = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+        refreshTimer.textContent = 'REFRESH IN ' + countdown;
+        document.querySelector('#tile-refresh-countdown').textContent = countdown;
       }
   
       refreshSelect.addEventListener('change', () => {
