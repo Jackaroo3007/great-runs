@@ -809,7 +809,6 @@
           const hasAnnouncementPercent = Number.isFinite(announcementPercent);
           const hasAnnouncementText = Boolean(announcementText.trim());
           const announcementBanner = document.querySelector('#announcement-banner');
-          const announcementCopy = document.querySelector('#announcement-copy');
           const announcementPercentElement = document.querySelector('#announcement-percent');
           announcementBanner.hidden = !hasAnnouncementText && !hasAnnouncementPercent;
           announcementBanner.classList.toggle('has-message', hasAnnouncementText);
@@ -820,7 +819,7 @@
           announcementPercentElement.textContent = hasAnnouncementPercent ? announcementPercent.toFixed(2) + '%' : '';
           const runs = Array.isArray(data.runs) ? data.runs : [];
           const updates = Array.isArray(data.recentUpdates) ? data.recentUpdates : [];
-          const snapshot = JSON.stringify({ title: data.title || 'Great Runs', runs, recentUpdates: updates });
+          const snapshot = JSON.stringify({ title: data.title || 'Great Runs', runs, recentUpdates: updates, announcement });
           if (previousBoardSnapshot !== null && snapshot !== previousBoardSnapshot) {
             playUpdateDing();
           }
