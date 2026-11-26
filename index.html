@@ -744,7 +744,7 @@
             <div class="update-list" id="update-list"><p class="empty">Loading update logs…</p></div>
           </div>
         </div>
-        <p class="hint">Set <code>boardStatus</code> in runs.json to replace ONLINE; use title and text arrays for update logs.</p>
+        <p class="hint">Set <code>boardStatus</code> in runs.json to replace ONLINE; set <code>announcement.expiresAt</code> in UTC, like <code>2026-11-27T00:00:00Z</code>, to hide it permanently.</p>
       </section>
   
       <footer>
@@ -757,6 +757,24 @@
     <script>
       let audioContext;
       let previousBoardSnapshot = null;
+      let announcementExpiryTimer = null;
+
+      function scheduleAnnouncementExpiry(banner, expiryTime) {
+        window.clearTimeout(announcementExpiryTimer);
+        if (!Number.isFinite(expiryTime)) return;
+
+        function hideWhenDue() {
+          const remaining = expiryTime - Date.now();
+          if (remaining <= 0) {
+            banner.hidden = true;
+            return;
+          }
+
+          announcementExpiryTimer = window.setTimeout(hideWhenDue, Math.min(remaining, 2147483647));
+        }
+
+        hideWhenDue();
+      }
   
       function unlockUpdateSound() {
         if (!audioContext) {
@@ -841,11 +859,18 @@
             ? null
             : Number(announcement.percentage);
           const announcementEnabled = announcement.enabled !== false;
+          const announcementExpiryText = typeof announcement.expiresAt === 'string'
+            ? announcement.expiresAt.trim()
+            : '';
+          const hasUtcExpiry = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(announcementExpiryText);
+          const announcementExpiryTime = hasUtcExpiry ? Date.parse(announcementExpiryText) : NaN;
+          const announcementExpired = Number.isFinite(announcementExpiryTime) && Date.now() >= announcementExpiryTime;
           const hasAnnouncementPercent = Number.isFinite(announcementPercent);
           const hasAnnouncementText = Boolean(announcementText.trim());
           const announcementBanner = document.querySelector('#announcement-banner');
           const announcementPercentElement = document.querySelector('#announcement-percent');
-          announcementBanner.hidden = !announcementEnabled || (!hasAnnouncementText && !hasAnnouncementPercent);
+          announcementBanner.hidden = !announcementEnabled || announcementExpired || (!hasAnnouncementText && !hasAnnouncementPercent);
+          scheduleAnnouncementExpiry(announcementBanner, announcementExpired ? NaN : announcementExpiryTime);
           announcementBanner.classList.toggle('has-message', hasAnnouncementText);
           announcementBanner.classList.toggle('has-percentage', hasAnnouncementPercent);
           announcementBanner.style.setProperty('--announcement-color', /^#[0-9a-f]{6}$/i.test(announcement.color || '') ? announcement.color : '#ff5d9d');
