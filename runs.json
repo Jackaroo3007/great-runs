@@ -3,6 +3,7 @@
   "boardStatus": "ONLINE",
   "announcement": {
     "enabled": true,
+    "expiresAt": null,
     "color": "#0080ff",
     "text": [
       "TEST!",
