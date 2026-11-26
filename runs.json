@@ -10,6 +10,13 @@
   ],
   "recentUpdates": [
     {
+      "date": "0000-00-00",
+      "text": [
+        "TEST"
+      ],
+      "title": "TEST ANNOUNCEMENT"
+    },
+    {
       "date": "2026-11-26",
       "text": [
         "v0.2.3 is here! Update your page by refreshing! What we added:",
