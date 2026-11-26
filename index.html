@@ -120,7 +120,6 @@
   
       .run-card {
         display: grid;
-        grid-template-columns: 1fr auto;
         grid-template-columns: minmax(0, 1fr) minmax(150px, 220px);
         align-items: center;
         gap: 18px;
@@ -136,7 +135,6 @@
       .live-dot { width: 9px; height: 9px; margin-right: 10px; border-radius: 50%; background: #ff5964; box-shadow: 0 0 12px #ff596488; flex: 0 0 auto; }
       .target { text-align: right; font-size: clamp(30px, 4.5vw, 48px); font-weight: 800; letter-spacing: -.07em; }
       .target small { display: block; margin-top: 2px; color: var(--muted); font: 9px var(--mono); letter-spacing: .09em; }
-      .empty { padding: 22px 24px; color: var(--muted); font-size: 14px; }
       .empty { padding: 22px 24px; color: var(--muted); font-size: 14px; }
 
       .target-progress { display: block; width: 100%; height: 7px; margin: 9px 0 0; overflow: hidden; border: 1px solid #31527a; background: #08111e; }
@@ -326,7 +324,6 @@
         color: #ff78a5;
         font: 700 12px/1.5 var(--mono);
         letter-spacing: .2em;
-        text-transform: uppercase;
        
       }
       .run-card .runner {
@@ -344,13 +341,6 @@
         letter-spacing: .04em;
         text-shadow: none;
       }
-      .run-card .target::before {
-        content: '↓';
-        display: block;
-        margin-bottom: 7px;
-        color: var(--lime);
-        font: 700 22px/1 var(--mono);
-      }
 
       .run-card .target small { margin-top: 4px; color: #7895bd; font-size: 8px; }
       .live-dot { box-shadow: 0 0 0 3px #ff596422; }
@@ -363,7 +353,6 @@
         transition: border-color .15s, background .15s;
       }
       .live-card:hover { transform: none; border-color: var(--teal); background: #111e38; }
-      .live-card .game { color: #ff78a5; font: 700 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
       .live-card .game { color: #ff78a5; font: 700 11px/1.4 var(--mono); letter-spacing: .12em; }
       .live-card .target { color: var(--teal); text-shadow: none; }
   
@@ -411,7 +400,6 @@
         color: #86a9df;
         font: 10px var(--mono);
         letter-spacing: .14em;
-        text-transform: uppercase;
        
       }
   
@@ -737,7 +725,6 @@
         </div>
         <p class="board-summary" id="board-summary" aria-live="polite">Loading summary…</p>
         <div class="run-list" id="run-list"><p class="empty">Loading targets…</p></div>
-        <div class="run-list" id="run-list"><p class="empty">Loading targets…</p></div>
         <p class="run-data-note">Set each run's <code>difficulty</code> in runs.json, such as “Top 1” or “Predicted Top 1”. Bars show the target percentage.</p>
       </section>
   
@@ -1028,12 +1015,10 @@
             runner.className = 'runner';
             runner.textContent = run.runner || 'Runner not set';
             details.append(game, runner);
-            details.append(game, runner);
             appendDifficultyTag(details, run.difficulty);
             target.className = 'target';
             target.textContent = run.target || '—';
             label.textContent = 'TARGET';
-            target.append(label);
             target.append(createTargetProgress(run.target), label);
             card.append(details, target);
             appendStreamLink(card, run);
@@ -1069,12 +1054,10 @@
             runner.className = 'runner';
             runner.textContent = run.runner || 'Runner not set';
             details.append(game, runner);
-            details.append(game, runner);
             appendDifficultyTag(details, run.difficulty);
             target.className = 'target';
             target.textContent = run.target || '—';
             label.textContent = 'TARGET';
-            target.append(label);
             target.append(createTargetProgress(run.target), label);
             card.append(details, target);
             appendStreamLink(card, run);
