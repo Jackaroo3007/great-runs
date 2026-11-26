@@ -10,11 +10,12 @@
   ],
   "recentUpdates": [
     {
-      "date": "0000-00-00",
+      "date": "2026-11-26",
       "text": [
-        "TEST"
+        "v0.2.4 is here! Update your page by refreshing! What we added:",
+        "We have updated the 'Recent Updates' part into 'Update Logs' and recoded how it works!"
       ],
-      "title": "TEST ANNOUNCEMENT"
+      "title": "UPDATE: v0.2.4"
     },
     {
       "date": "2026-11-26",
