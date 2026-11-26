@@ -1,15 +1,15 @@
 {
   "title": "Great Runs",
-  "boardStatus": "ONLINE",
+  "boardStatus": "OFFLINE",
   "announcement": {
     "enabled": true,
-    "expiresAt": "2026-11-26T22:00:00Z",
-    "color": "#0080ff",
+    "expiresAt": "2026-11-26T23:30:00Z",
+    "color": "#ff0000",
     "text": [
-      "TEST!",
-      "Test announcement."
+      "WARNING!",
+      "Huge overhaul releasing shortly, Page will close temporarily."
     ],
-    "percentage": 77.74
+    "percentage": null
   },
   "runs": [
     {
