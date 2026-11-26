@@ -596,6 +596,13 @@
         font: 600 14px/1.7 var(--mono);
         white-space: pre-line;
       }
+      .announcement-countdown {
+        margin: 10px 0 0;
+        color: var(--announcement-color);
+        font: 700 9px/1.5 var(--mono);
+        letter-spacing: .12em;
+      }
+      .announcement-countdown[hidden] { display: none; }
       .announcement-percent {
         min-width: 170px;
         padding-left: 20px;
@@ -631,6 +638,7 @@
         <div class="announcement-copy" id="announcement-copy">
           <p class="announcement-label" id="announcement-label">BROADCAST // ANNOUNCEMENT</p>
           <p class="announcement-text" id="announcement-text"></p>
+          <p class="announcement-countdown" id="announcement-countdown" hidden></p>
         </div>
         <strong class="announcement-percent" id="announcement-percent" hidden></strong>
       </section>
@@ -758,22 +766,41 @@
       let audioContext;
       let previousBoardSnapshot = null;
       let announcementExpiryTimer = null;
+      let announcementCountdownInterval = null;
 
       function scheduleAnnouncementExpiry(banner, expiryTime) {
         window.clearTimeout(announcementExpiryTimer);
-        if (!Number.isFinite(expiryTime)) return;
+        window.clearInterval(announcementCountdownInterval);
 
-        function hideWhenDue() {
+        const countdown = document.querySelector('#announcement-countdown');
+        if (!Number.isFinite(expiryTime)) {
+          countdown.hidden = true;
+          countdown.textContent = '';
+          return;
+        }
+
+        countdown.hidden = false;
+
+        function updateCountdown() {
           const remaining = expiryTime - Date.now();
           if (remaining <= 0) {
             banner.hidden = true;
+            countdown.hidden = true;
+            window.clearInterval(announcementCountdownInterval);
             return;
           }
 
-          announcementExpiryTimer = window.setTimeout(hideWhenDue, Math.min(remaining, 2147483647));
+          const totalSeconds = Math.ceil(remaining / 1000);
+          const days = Math.floor(totalSeconds / 86400);
+          const hours = Math.floor((totalSeconds % 86400) / 3600);
+          const minutes = Math.floor((totalSeconds % 3600) / 60);
+          const seconds = totalSeconds % 60;
+          const clock = [hours, minutes, seconds].map((part) => String(part).padStart(2, '0')).join(':');
+          countdown.textContent = 'TIME REMAINING · ' + (days ? days + 'D ' : '') + clock;
         }
 
-        hideWhenDue();
+        updateCountdown();
+        announcementCountdownInterval = window.setInterval(updateCountdown, 1000);
       }
   
       function unlockUpdateSound() {
