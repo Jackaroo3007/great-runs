@@ -2,6 +2,7 @@
   "title": "Great Runs",
   "boardStatus": "ONLINE",
   "announcement": {
+    "enabled": true,
     "color": "#0080ff",
     "text": ["TEST!", "Test announcement."],
     "percentage": 77.74
@@ -21,7 +22,7 @@
       "text": [
         "v0.3.1 is here! Update your page by refreshing! What we added:",
         "- New ANNOUNCEMENT banner at the top for new bests!",
-        "- Site now has 4 buttons for quicker information!",
+        "- Site now has 4 buttons for quicker information!"
       ],
       "title": "UPDATE: v0.3.1"
     },
