@@ -18,6 +18,13 @@
       "target": "40%",
       "live": false,
       "streamUrl": "https://www.twitch.tv/zoinkgd"
+    },
+    {
+      "game": "Ashley Wave Trials",
+      "runner": "Brian Cheese",
+      "target": "14%",
+      "live": false,
+      "streamUrl": "https://www.twitch.tv/brian_cheese"
     }
   ],
   "recentUpdates": [
@@ -64,6 +71,10 @@
     }
   ],
   "percentageChanges": [
+    {
+      "date": "2026-11-26",
+      "text": "Added the Ashley Wave Trials XP drop target for Brian Cheese: 14%."
+    },
     {
       "date": "2026-11-26",
       "text": "Heliopolis XP drop target for Zoink: 44% -> 40%."
