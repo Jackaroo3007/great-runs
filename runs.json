@@ -1,13 +1,13 @@
 {
   "title": "Great Runs",
-  "boardStatus": "MAINTENANCE",
+  "boardStatus": "ONLINE",
   "announcement": {
     "enabled": true,
-    "expiresAt": "2026-11-26T23:45:00Z",
-    "color": "#ff0000",
+    "expiresAt": "2026-11-27T01:00:00Z",
+    "color": "#a0a000",
     "text": [
-      "WARNING!",
-      "Huge overhaul releasing shortly, Page will close temporarily."
+      "Sorry for the maintenance!",
+      "The website has gone through a little bit of an update and had to go through maintenance for a minute."
     ],
     "percentage": null
   },
@@ -30,6 +30,16 @@
     }
   ],
   "recentUpdates": [
+    {
+      "date": "2026-11-27",
+      "text": [
+        "v0.3.2 is here! Update your page by refreshing! What we added:",
+        "- SORRY FOR MAINTENANCE!",
+        "- Progress bar to show visual progress",
+        "- Difficulty Visualisation"
+      ],
+      "title": "UPDATE: v0.3.2"
+    },
     {
       "date": "2026-11-26",
       "text": [
