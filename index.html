@@ -166,7 +166,9 @@
       font-size: 8px;
     }
     .date { padding-top: 3px; font: 10px var(--mono); }
-    .update-text { margin: 0; color: #dbe3e8; font-size: 13px; line-height: 1.7; }
+    .update-content { min-width: 0; }
+    .update-title { margin: 0 0 6px; color: var(--ink); font-size: 14px; line-height: 1.4; letter-spacing: -.02em; }
+    .update-text { margin: 0; color: #dbe3e8; font-size: 13px; line-height: 1.7; white-space: pre-line; }
     .hint { padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: 10px var(--mono); }
     .hint code { color: var(--lime); }
 
@@ -208,7 +210,7 @@
 <body>
   <main class="shell">
     <header class="topbar">
-      <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.2.2</a>
+      <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.2.3</a>
       <span class="meta"><span class="dot"></span>XP DROP TARGETS</span>
     </header>
 
@@ -255,11 +257,11 @@
         </div>
         <div class="update-list" id="update-list"><p class="empty">Loading updates…</p></div>
       </div>
-      <p class="hint">Change targets and updates by editing <code>runs.json</code>.</p>
+      <p class="hint">Use title for headings and a text array for separate lines in <code>runs.json</code>.</p>
     </section>
 
     <footer>
-      <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.2.1b</a>
+      <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.2.3</a>
       <span>XP DROP TARGETS</span>
       <a class="back" href="#top">BACK TO TOP ↑</a>
     </footer>
@@ -418,9 +420,14 @@
         updates.forEach((entry) => {
           const row = document.createElement('article');
           const date = document.createElement('time');
+          const content = document.createElement('div');
+          const title = document.createElement('h3');
           const text = document.createElement('p');
 
           row.className = 'update';
+          content.className = 'update-content';
+          title.className = 'update-title';
+          title.textContent = typeof entry.title === 'string' ? entry.title : '';
           const updateKey = getUpdateKey(entry);
           if (newUpdateUntil.has(updateKey) && updateRefreshCycle <= newUpdateUntil.get(updateKey)) {
             row.classList.add('update-new');
@@ -429,8 +436,10 @@
           date.dateTime = entry.date || '';
           date.textContent = entry.date || 'RECENT';
           text.className = 'update-text';
-          text.textContent = entry.text || 'Update';
-          row.append(date, text);
+          text.textContent = Array.isArray(entry.text) ? entry.text.map((line) => String(line ?? '')).join('\n') : entry.text || 'Update';
+          if (title.textContent) content.append(title);
+          content.append(text);
+          row.append(date, content);
           updateList.append(row);
         });
 
@@ -448,7 +457,7 @@
     let previousUpdateKeys = null;
     let updateRefreshCycle = 0;
     const newUpdateUntil = new Map();
-    const getUpdateKey = (entry) => JSON.stringify([entry.date || '', entry.text || '']);
+    const getUpdateKey = (entry) => JSON.stringify([entry.date || '', entry.title || '', entry.text || '']);
 
     const refreshTimer = document.createElement('span');
     refreshTimer.className = 'refresh-timer';
