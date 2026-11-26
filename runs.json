@@ -19,6 +19,15 @@
     {
       "date": "2026-11-26",
       "text": [
+        "v0.3.1 is here! Update your page by refreshing! What we added:",
+        "- New ANNOUNCEMENT banner at the top for new bests!",
+        "- Site now has 4 buttons for quicker information!",
+      ],
+      "title": "UPDATE: v0.3.1"
+    },
+    {
+      "date": "2026-11-26",
+      "text": [
         "v0.3.0 is here! Update your page by refreshing! What we added:",
         "- You may have noticed multiple website changes, we have decided to stick with this one :)",
         "- A Summary for streams!",
