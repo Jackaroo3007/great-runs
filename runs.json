@@ -5,7 +5,8 @@
       "game": "Heliopolis",
       "runner": "Zoink",
       "target": "40%",
-      "live": true
+      "live": true,
+      "streamUrl": "https://www.twitch.tv/zoinkgd"
     }
   ],
   "recentUpdates": [
