@@ -155,6 +155,16 @@
     .update-list { padding: 0 18px; }
     .update { display: grid; grid-template-columns: 100px 1fr; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); }
     .update:last-child { border-bottom: 0; }
+    .update-new {
+      padding-left: 12px;
+      border-left: 2px solid var(--lime);
+      background: linear-gradient(90deg, #c9f36a14, transparent 75%);
+    }
+    .update-new .date::after {
+      content: ' · NEW';
+      color: var(--lime);
+      font-size: 8px;
+    }
     .date { padding-top: 3px; font: 10px var(--mono); }
     .update-text { margin: 0; color: #dbe3e8; font-size: 13px; line-height: 1.7; }
     .hint { padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: 10px var(--mono); }
@@ -386,12 +396,35 @@
         });
 
         updateList.replaceChildren();
+        const currentUpdateKeys = new Set(updates.map(getUpdateKey));
+
+        if (previousUpdateKeys !== null) {
+          updateRefreshCycle += 1;
+          updates.forEach((entry) => {
+            const key = getUpdateKey(entry);
+            if (!previousUpdateKeys.has(key)) {
+              newUpdateUntil.set(key, updateRefreshCycle + 4);
+            }
+          });
+        }
+
+        previousUpdateKeys = currentUpdateKeys;
+        for (const [key, lastHighlightedCycle] of newUpdateUntil) {
+          if (lastHighlightedCycle < updateRefreshCycle) {
+            newUpdateUntil.delete(key);
+          }
+        }
+
         updates.forEach((entry) => {
           const row = document.createElement('article');
           const date = document.createElement('time');
           const text = document.createElement('p');
 
           row.className = 'update';
+          const updateKey = getUpdateKey(entry);
+          if (newUpdateUntil.has(updateKey) && updateRefreshCycle <= newUpdateUntil.get(updateKey)) {
+            row.classList.add('update-new');
+          }
           date.className = 'date';
           date.dateTime = entry.date || '';
           date.textContent = entry.date || 'RECENT';
@@ -412,6 +445,11 @@
     }
 
     loadBoard();
+    let previousUpdateKeys = null;
+    let updateRefreshCycle = 0;
+    const newUpdateUntil = new Map();
+    const getUpdateKey = (entry) => JSON.stringify([entry.date || '', entry.text || '']);
+
     const refreshTimer = document.createElement('span');
     refreshTimer.className = 'refresh-timer';
     refreshTimer.textContent = 'REFRESH IN 15S';
