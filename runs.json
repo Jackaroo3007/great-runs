@@ -1,5 +1,6 @@
 {
   "title": "Great Runs",
+  "boardStatus": "ONLINE",
   "announcement": {
     "color": "#0080ff",
     "text": ["TEST!", "Test announcement."],
