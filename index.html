@@ -154,6 +154,7 @@
     .updates-title span, .date { color: var(--teal); }
     .update-view-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
     .view-switch, .page-controls { display: flex; align-items: center; gap: 6px; }
+    .page-controls[hidden] { display: none; }
     .view-button, .page-button { border: 1px solid var(--line); border-radius: 8px; background: #0d1319; color: var(--muted); font: 10px var(--mono); cursor: pointer; }
     .view-button { padding: 9px 13px; }
     .page-button { width: 34px; height: 32px; font-size: 15px; }
@@ -219,7 +220,7 @@
 <body>
   <main class="shell">
     <header class="topbar">
-      <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.2.4</a>
+      <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.2.3</a>
       <span class="meta"><span class="dot"></span>XP DROP TARGETS</span>
     </header>
 
@@ -264,18 +265,20 @@
           <p class="eyebrow">THE LATEST</p>
           <h2 id="updates-heading" class="updates-title">Update logs<span>.</span></h2>
         </div>
-        <div class="update-view-controls" aria-label="Update log view">
-          <div class="view-switch" role="group" aria-label="Choose update log layout">
-            <button class="view-button active" type="button" data-view="scroll" aria-pressed="true">Scroll</button>
-            <button class="view-button" type="button" data-view="pages" aria-pressed="false">Pages</button>
+        <div>
+          <div class="update-view-controls" aria-label="Update log view">
+            <div class="view-switch" role="group" aria-label="Choose update log layout">
+              <button class="view-button active" type="button" data-view="scroll" aria-pressed="true">Scroll</button>
+              <button class="view-button" type="button" data-view="pages" aria-pressed="false">Pages</button>
+            </div>
+            <div class="page-controls" id="page-controls" hidden>
+              <button class="page-button" id="previous-page" type="button" aria-label="Previous page">←</button>
+              <span class="page-number" id="page-number">1 / 1</span>
+              <button class="page-button" id="next-page" type="button" aria-label="Next page">→</button>
+            </div>
           </div>
-          <div class="page-controls" id="page-controls" hidden>
-            <button class="page-button" id="previous-page" type="button" aria-label="Previous page">←</button>
-            <span class="page-number" id="page-number">1 / 1</span>
-            <button class="page-button" id="next-page" type="button" aria-label="Next page">→</button>
-          </div>
+          <div class="update-list" id="update-list"><p class="empty">Loading update logs…</p></div>
         </div>
-        <div class="update-list" id="update-list"><p class="empty">Loading update logs…</p></div>
       </div>
       <p class="hint">Use title for headings and a text array for separate lines in <code>runs.json</code>.</p>
     </section>
