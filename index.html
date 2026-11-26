@@ -189,6 +189,20 @@
         .live-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       }
   
+      .board-status-screen[hidden] { display: none; }
+      .board-status-screen {
+        min-height: 100vh; display: grid; place-items: center; padding: 24px;
+        background: radial-gradient(ellipse at 50% 0%, #172747, transparent 58%), #090d12;
+        text-align: center;
+      }
+      .board-status-card {
+        width: min(100%, 680px); padding: clamp(28px, 6vw, 56px);
+        border: 2px solid #31527a; background: #0c1830;
+        box-shadow: inset 0 0 0 3px #080f20, 0 8px 0 #060d1b;
+      }
+      .board-status-label { margin: 0 0 18px; color: #ff5d9d; font: 700 10px var(--mono); letter-spacing: .18em; }
+      .board-status-card h1 { margin: 0; color: #e9f0ff; font: 800 clamp(30px, 7vw, 56px)/1.1 var(--mono); letter-spacing: -.06em; }
+      .board-status-message { margin: 18px 0 0; color: #a9bbd8; font: 13px/1.7 var(--mono); white-space: pre-line; }
       @media (max-width: 650px) {
         .shell { padding: 0 5%; }
         .hero { min-height: 340px; margin-top: 22px; padding: 40px 24px 22px; }
@@ -628,7 +642,13 @@
     </style>
   </head>
   <body>
-    <main class="shell">
+    <section class="board-status-screen" id="board-status-screen" aria-live="polite" hidden>
+      <div class="board-status-card">
+        <p class="board-status-label" id="board-status-label"></p>
+        <h1 id="board-status-heading"></h1>
+        <p class="board-status-message" id="board-status-message"></p>
+      </div>
+    </section>    <main class="shell">
       <header class="topbar">
         <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.3.1</a>
         <span class="meta"><span class="dot"></span>XP DROP TARGETS</span>
@@ -872,11 +892,36 @@
           const data = await response.json();
           const boardStatus = typeof data.boardStatus === 'string' && data.boardStatus.trim() ? data.boardStatus.trim() : 'ONLINE';
           const boardStatusElement = document.querySelector('#board-status');
-          const statusIsOffline = /\b(offline|unavailable|down|closed|maintenance)\b/i.test(boardStatus);
+          const statusIsMaintenance = /\bmaintenance\b/i.test(boardStatus);
+          const statusIsOffline = /\b(offline|unavailable|down|closed)\b/i.test(boardStatus);
           const statusIsOnline = /\b(online|operational|ready)\b/i.test(boardStatus);
+          const shouldShowStatusScreen = statusIsOffline || statusIsMaintenance;
+          const statusScreen = document.querySelector('#board-status-screen');
+          const statusLabel = document.querySelector('#board-status-label');
+          const statusHeading = document.querySelector('#board-status-heading');
+          const statusMessage = document.querySelector('#board-status-message');
+
+          document.querySelector('.shell').hidden = shouldShowStatusScreen;
+          statusScreen.hidden = !shouldShowStatusScreen;
           boardStatusElement.textContent = '● ' + boardStatus;
           boardStatusElement.classList.toggle('status-offline', statusIsOffline);
-          boardStatusElement.classList.toggle('status-warning', !statusIsOffline && !statusIsOnline);
+          boardStatusElement.classList.toggle('status-warning', statusIsMaintenance || (!statusIsOffline && !statusIsOnline));
+
+          if (shouldShowStatusScreen) {
+            if (statusIsMaintenance) {
+              statusLabel.textContent = 'SCHEDULED MAINTENANCE';
+              statusLabel.style.color = '#ffd166';
+              statusHeading.textContent = 'Page is under maintenance';
+              statusMessage.textContent = /^maintenance$/i.test(boardStatus)
+                ? 'The page is temporarily unavailable while maintenance is in progress. Please check back later.'
+                : boardStatus;
+            } else {
+              statusLabel.textContent = 'BOARD OFFLINE';
+              statusLabel.style.color = '#ff5d9d';
+              statusHeading.textContent = 'Page is offline';
+              statusMessage.textContent = /^offline$/i.test(boardStatus) ? 'Please check back later.' : boardStatus;
+            }
+          }
 
           const announcement = data.announcement && typeof data.announcement === 'object' ? data.announcement : {};
           const announcementText = Array.isArray(announcement.text)
