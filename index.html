@@ -699,7 +699,19 @@
         <div class="run-list" id="run-list"><p class="empty">Loading targets…</p></div>
       </section>
   
-      <section class="updates" id="updates" aria-labelledby="updates-heading">
+            <section class="updates change-section" id="percentage-changes" aria-labelledby="percentage-changes-heading">
+        <div class="kicker"><span class="star">↕</span><span>DROP HISTORY</span><span class="rule"></span></div>
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">TARGET MOVEMENT</p>
+            <h2 id="percentage-changes-heading" class="updates-title">Drop percentage changes<span>.</span></h2>
+          </div>
+          <p class="side-note">A separate record of<br>XP drop target changes.</p>
+        </div>
+        <div class="update-list" id="percentage-change-list"><p class="empty">Loading percentage changes…</p></div>
+      </section>
+
+<section class="updates" id="updates" aria-labelledby="updates-heading">
         <div class="kicker"><span class="star">✳</span><span>WHAT'S NEW</span><span class="rule"></span></div>
         <div class="updates-grid">
           <div>
@@ -794,6 +806,7 @@
         const liveSection = document.querySelector('#live-section');
         const liveGrid = document.querySelector('#live-grid');
         const updateList = document.querySelector('#update-list');
+        const percentageChangeList = document.querySelector('#percentage-change-list');
         const boardSummary = document.querySelector('#board-summary');
   
         try {
@@ -817,7 +830,7 @@
             ? null
             : Number(announcement.percentage);
           const announcementEnabled = announcement.enabled !== false;
-      const hasAnnouncementPercent = Number.isFinite(announcementPercent);
+          const hasAnnouncementPercent = Number.isFinite(announcementPercent);
           const hasAnnouncementText = Boolean(announcementText.trim());
           const announcementBanner = document.querySelector('#announcement-banner');
           const announcementPercentElement = document.querySelector('#announcement-percent');
@@ -830,7 +843,8 @@
           announcementPercentElement.textContent = hasAnnouncementPercent ? announcementPercent.toFixed(2) + '%' : '';
           const runs = Array.isArray(data.runs) ? data.runs : [];
           const updates = Array.isArray(data.recentUpdates) ? data.recentUpdates : [];
-          const snapshot = JSON.stringify({ title: data.title || 'Great Runs', runs, recentUpdates: updates, announcement, boardStatus });
+          const percentageChanges = Array.isArray(data.percentageChanges) ? data.percentageChanges : [];
+          const snapshot = JSON.stringify({ title: data.title || 'Great Runs', runs, recentUpdates: updates, percentageChanges, announcement, boardStatus });
           if (previousBoardSnapshot !== null && snapshot !== previousBoardSnapshot) {
             playUpdateDing();
           }
@@ -915,6 +929,33 @@
             runList.append(card);
           });
   
+          percentageChangeList.replaceChildren();
+          if (!percentageChanges.length) {
+            percentageChangeList.innerHTML = '<p class="empty">No percentage changes yet.</p>';
+          }
+
+          percentageChanges.forEach((entry) => {
+            const row = document.createElement('article');
+            const date = document.createElement('time');
+            const content = document.createElement('div');
+            const title = document.createElement('h3');
+            const text = document.createElement('p');
+
+            row.className = 'update';
+            date.className = 'date';
+            date.dateTime = entry.date || '';
+            date.textContent = entry.date || 'RECENT';
+            content.className = 'update-content';
+            title.className = 'update-title';
+            title.textContent = typeof entry.title === 'string' ? entry.title : '';
+            text.className = 'update-text';
+            text.textContent = Array.isArray(entry.text) ? entry.text.map((line) => String(line ?? '')).join('\n') : entry.text || 'Target change';
+            if (title.textContent) content.append(title);
+            content.append(text);
+            row.append(date, content);
+            percentageChangeList.append(row);
+          });
+
           updateList.replaceChildren();
           const currentUpdateKeys = new Set(updates.map(getUpdateKey));
   
