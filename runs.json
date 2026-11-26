@@ -22,7 +22,7 @@
     {
       "game": "Ashley Wave Trials",
       "runner": "Brian Cheese",
-      "target": "18%",
+      "target": "16%",
       "live": false,
       "streamUrl": "https://www.twitch.tv/brian_cheese"
     }
@@ -71,6 +71,10 @@
     }
   ],
   "percentageChanges": [
+    {
+      "date": "2026-11-26",
+      "text": "Ashley Wave Trials XP drop target for Brian Cheese: 18% -> 16%."
+    },
     {
       "date": "2026-11-26",
       "text": "Ashley Wave Trials XP drop target for Brian Cheese: 14% -> 18%."
