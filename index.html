@@ -543,7 +543,9 @@
         font-size: 18px;
       }
       .tile-scan strong { font-size: 24px; letter-spacing: .02em; }
-      .status-online { margin-left: 8px; color: #70e4ce; }
+      .status-online { display: inline-block; max-width: min(48vw, 460px); margin-left: 8px; color: #70e4ce; vertical-align: middle; overflow-wrap: anywhere; }
+      .status-offline { color: #ff5964; }
+      .status-warning { color: #ffd166; }
       .hero-bottom { padding-top: 14px; border-color: #29456e; font-size: 9px; }
       .section { scroll-margin-top: 18px; }
       .live-section { scroll-margin-top: 18px; }
@@ -669,7 +671,7 @@
           </div>
         </nav>
         <div class="hero-bottom">
-          <span>BOARD STATUS <span class="status-online">● ONLINE</span></span>
+          <span>BOARD STATUS <span class="status-online" id="board-status" aria-live="polite">● ONLINE</span></span>
           <span>SELECT A PANEL TO EXPLORE ↓</span>
         </div>
       </section>
@@ -719,7 +721,7 @@
             <div class="update-list" id="update-list"><p class="empty">Loading update logs…</p></div>
           </div>
         </div>
-        <p class="hint">Use title for headings and a text array for separate lines in <code>runs.json</code>.</p>
+        <p class="hint">Set <code>boardStatus</code> in runs.json to replace ONLINE; use title and text arrays for update logs.</p>
       </section>
   
       <footer>
@@ -799,6 +801,14 @@
           if (!response.ok) throw new Error('Could not load runs.json');
   
           const data = await response.json();
+          const boardStatus = typeof data.boardStatus === 'string' && data.boardStatus.trim() ? data.boardStatus.trim() : 'ONLINE';
+          const boardStatusElement = document.querySelector('#board-status');
+          const statusIsOffline = /\b(offline|unavailable|down|closed|maintenance)\b/i.test(boardStatus);
+          const statusIsOnline = /\b(online|operational|ready)\b/i.test(boardStatus);
+          boardStatusElement.textContent = '● ' + boardStatus;
+          boardStatusElement.classList.toggle('status-offline', statusIsOffline);
+          boardStatusElement.classList.toggle('status-warning', !statusIsOffline && !statusIsOnline);
+
           const announcement = data.announcement && typeof data.announcement === 'object' ? data.announcement : {};
           const announcementText = Array.isArray(announcement.text)
             ? announcement.text.map((line) => String(line ?? '')).join('\n')
@@ -819,7 +829,7 @@
           announcementPercentElement.textContent = hasAnnouncementPercent ? announcementPercent.toFixed(2) + '%' : '';
           const runs = Array.isArray(data.runs) ? data.runs : [];
           const updates = Array.isArray(data.recentUpdates) ? data.recentUpdates : [];
-          const snapshot = JSON.stringify({ title: data.title || 'Great Runs', runs, recentUpdates: updates, announcement });
+          const snapshot = JSON.stringify({ title: data.title || 'Great Runs', runs, recentUpdates: updates, announcement, boardStatus });
           if (previousBoardSnapshot !== null && snapshot !== previousBoardSnapshot) {
             playUpdateDing();
           }
