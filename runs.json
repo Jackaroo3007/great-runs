@@ -4,7 +4,10 @@
   "announcement": {
     "enabled": true,
     "color": "#0080ff",
-    "text": ["TEST!", "Test announcement."],
+    "text": [
+      "TEST!",
+      "Test announcement."
+    ],
     "percentage": 77.74
   },
   "runs": [
@@ -57,8 +60,10 @@
     {
       "date": "2026-11-26",
       "text": "v0.2.2 is here! Update your page by refreshing! What we added: Highlights to recent announcements!"
-    },
-     {
+    }
+  ],
+  "percentageChanges": [
+    {
       "date": "2026-11-26",
       "text": "Heliopolis XP drop target for Zoink: 44% -> 40%."
     },
