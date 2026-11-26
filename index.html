@@ -757,9 +757,9 @@
       const newUpdateUntil = new Map();
       const getUpdateKey = (entry) => JSON.stringify([entry.date || '', entry.title || '', entry.text || '']);
   
-      const refreshMinutes = [10, 15, 20, 30, 45, 60];
-      let selectedRefreshMinutes = 15;
-      let refreshCountdown = selectedRefreshMinutes * 60;
+      const refreshIntervals = [10, 15, 20, 30, 45, 60];
+      let selectedRefreshSeconds = 15;
+      let refreshCountdownSeconds = selectedRefreshSeconds;
       const refreshSetting = document.createElement('label');
       const refreshSelect = document.createElement('select');
       const refreshTimer = document.createElement('span');
@@ -767,37 +767,37 @@
       refreshSetting.className = 'refresh-setting';
       refreshSetting.append('UPDATE EVERY ');
       refreshSelect.className = 'refresh-select';
-      refreshSelect.setAttribute('aria-label', 'Update interval in minutes');
-      refreshMinutes.forEach((minutes) => {
+      refreshSelect.setAttribute('aria-label', 'Update interval in seconds');
+      refreshIntervals.forEach((seconds) => {
         const option = document.createElement('option');
-        option.value = String(minutes);
-        option.textContent = minutes + ' MIN';
+        option.value = String(seconds);
+        option.textContent = seconds + ' SEC';
         refreshSelect.append(option);
       });
-      refreshSelect.value = String(selectedRefreshMinutes);
+      refreshSelect.value = String(selectedRefreshSeconds);
       refreshSetting.append(refreshSelect);
   
       refreshTimer.className = 'refresh-timer';
       document.querySelector('.topbar .meta').append(refreshSetting, refreshTimer);
   
       function formatRefreshCountdown() {
-        const minutes = Math.floor(refreshCountdown / 60);
-        const seconds = refreshCountdown % 60;
+        const minutes = Math.floor(refreshCountdownSeconds / 60);
+        const seconds = refreshCountdownSeconds % 60;
         refreshTimer.textContent = 'REFRESH IN ' + String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
       }
   
       refreshSelect.addEventListener('change', () => {
-        selectedRefreshMinutes = Number(refreshSelect.value);
-        refreshCountdown = selectedRefreshMinutes * 60;
+        selectedRefreshSeconds = Number(refreshSelect.value);
+        refreshCountdownSeconds = selectedRefreshSeconds;
         formatRefreshCountdown();
       });
   
       function updateRefreshTimer() {
-        if (refreshCountdown <= 1) {
-          refreshCountdown = selectedRefreshMinutes * 60;
+        if (refreshCountdownSeconds <= 1) {
+          refreshCountdownSeconds = selectedRefreshSeconds;
           loadBoard();
         } else {
-          refreshCountdown -= 1;
+          refreshCountdownSeconds -= 1;
         }
         formatRefreshCountdown();
       }
