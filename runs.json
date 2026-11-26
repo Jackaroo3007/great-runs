@@ -4,7 +4,7 @@
     "color": "#0080ff",
     "text": ["TEST!", "Test announcement."],
     "percentage": 77.74
-  }
+  },
   "runs": [
     {
       "game": "Heliopolis",
