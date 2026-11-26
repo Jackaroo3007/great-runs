@@ -106,7 +106,7 @@
       letter-spacing: .08em;
     }
 
-    .section { padding: 72px 0 80px; }
+    .section { padding: 62px 0 80px; }
     .section-head { display: flex; align-items: end; justify-content: space-between; margin-bottom: 26px; }
     .section-head h2, .updates-title { margin: 12px 0 0; font-size: clamp(32px, 4.5vw, 54px); letter-spacing: -.06em; }
     .side-note { color: var(--muted); font: 10px/1.8 var(--mono); text-align: right; }
@@ -137,6 +137,14 @@
     .target small { display: block; margin-top: 2px; color: var(--muted); font: 9px var(--mono); letter-spacing: .09em; }
     .empty { padding: 22px 24px; color: var(--muted); font-size: 14px; }
 
+    .live-section { margin: 36px 0 0; }
+    .live-section[hidden] { display: none; }
+    .live-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+    .live-card { min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #0d1319; }
+    .live-card .game { font-size: 15px; }
+    .live-card .runner { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .live-card .target { margin-top: 14px; text-align: left; font-size: 26px; }
+
     .updates { padding: 38px 40px 28px; }
     .kicker { display: flex; align-items: center; gap: 13px; color: var(--lime); }
     .star { font-size: 19px; }
@@ -155,21 +163,31 @@
     footer { min-height: 78px; border: 0; }
     .back { color: inherit; text-decoration: none; }
 
+    @media (max-width: 1000px) {
+      .live-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
     @media (max-width: 650px) {
       .shell { padding: 0 5%; }
       .hero { min-height: 340px; margin-top: 22px; padding: 40px 24px 22px; }
       .hero h1 { font-size: clamp(48px, 12vw, 78px); }
       .hero-bottom { font-size: 8px; }
-      .section { padding: 55px 0; }
+      .section { padding: 48px 0 55px; }
       .section-head { align-items: start; gap: 12px; }
       .side-note { font-size: 8px; }
       .run-card { grid-template-columns: 1fr auto; gap: 11px; padding: 20px 14px; }
+      .live-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+      .live-card { padding: 13px; }
       .updates { padding: 30px 22px 24px; }
       .updates-grid { grid-template-columns: 1fr; gap: 20px; padding: 28px 0; }
       .updates-title br { display: none; }
       .update { grid-template-columns: 76px 1fr; gap: 12px; }
       .update-list { padding: 0 13px; }
       footer { flex-wrap: wrap; gap: 10px; padding: 18px 0; }
+    }
+
+    @media (max-width: 360px) {
+      .live-grid { grid-template-columns: 1fr; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -194,6 +212,17 @@
         <span>XP DROP REQUIREMENTS</span>
         <span>SCROLL TO EXPLORE ↓</span>
       </div>
+    </section>
+
+    <section class="live-section" id="live-section" aria-labelledby="live-heading" hidden>
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">LIVE RIGHT NOW</p>
+          <h2 id="live-heading">Currently live</h2>
+        </div>
+        <p class="side-note">Targets currently marked<br>as live.</p>
+      </div>
+      <div class="live-grid" id="live-grid"></div>
     </section>
 
     <section class="section" aria-labelledby="runs-heading">
@@ -229,6 +258,8 @@
   <script>
     async function loadBoard() {
       const runList = document.querySelector('#run-list');
+      const liveSection = document.querySelector('#live-section');
+      const liveGrid = document.querySelector('#live-grid');
       const updateList = document.querySelector('#update-list');
 
       try {
@@ -238,17 +269,47 @@
         const data = await response.json();
         const runs = Array.isArray(data.runs) ? data.runs : [];
         const updates = Array.isArray(data.recentUpdates) ? data.recentUpdates : [];
+        const getPercentage = (target) => Number.parseFloat(String(target || '0')) || 0;
+        const sortedRuns = [...runs].sort((a, b) => getPercentage(b.target) - getPercentage(a.target));
+        const liveRuns = sortedRuns.filter((run) => run.live);
 
         document.title = (data.title || 'Great Runs') + ' — XP Drop Targets';
         document.querySelector('#run-count').textContent = '  ' + String(runs.length).padStart(2, '0');
 
+        liveGrid.replaceChildren();
+        liveSection.hidden = liveRuns.length === 0;
+        liveRuns.forEach((run) => {
+          const card = document.createElement('article');
+          const details = document.createElement('div');
+          const game = document.createElement('div');
+          const liveDot = document.createElement('span');
+          const runner = document.createElement('div');
+          const target = document.createElement('div');
+          const label = document.createElement('small');
+
+          card.className = 'live-card';
+          game.className = 'game';
+          game.textContent = run.game || 'Untitled game';
+          liveDot.className = 'live-dot';
+          liveDot.setAttribute('role', 'img');
+          liveDot.setAttribute('aria-label', 'Live');
+          liveDot.title = 'Live';
+          game.prepend(liveDot);
+          runner.className = 'runner';
+          runner.textContent = run.runner || 'Runner not set';
+          details.append(game, runner);
+          target.className = 'target';
+          target.textContent = run.target || '—';
+          label.textContent = 'TARGET';
+          target.append(label);
+          card.append(details, target);
+          liveGrid.append(card);
+        });
+
         runList.replaceChildren();
-        if (!runs.length) {
+        if (!sortedRuns.length) {
           runList.innerHTML = '<p class="empty">No XP drop targets yet. Add one in runs.json.</p>';
         }
-
-        const getPercentage = (target) => Number.parseFloat(String(target || '0')) || 0;
-        const sortedRuns = [...runs].sort((a, b) => getPercentage(b.target) - getPercentage(a.target));
 
         sortedRuns.forEach((run) => {
           const card = document.createElement('article');
@@ -303,6 +364,7 @@
         }
       } catch (error) {
         runList.innerHTML = '<p class="empty">Could not load runs.json. Check the JSON format.</p>';
+        liveSection.hidden = true;
         updateList.replaceChildren();
       }
     }
