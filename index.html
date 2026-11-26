@@ -268,8 +268,8 @@
         <div>
           <div class="update-view-controls" aria-label="Update log view">
             <div class="view-switch" role="group" aria-label="Choose update log layout">
-              <button class="view-button active" type="button" data-view="scroll" aria-pressed="true">Scroll</button>
-              <button class="view-button" type="button" data-view="pages" aria-pressed="false">Pages</button>
+              <button class="view-button" type="button" data-view="scroll" aria-pressed="false">Scroll</button>
+              <button class="view-button active" type="button" data-view="pages" aria-pressed="true">Pages</button>
             </div>
             <div class="page-controls" id="page-controls" hidden>
               <button class="page-button" id="previous-page" type="button" aria-label="Previous page">←</button>
@@ -340,7 +340,7 @@
 
         const data = await response.json();
         const runs = Array.isArray(data.runs) ? data.runs : [];
-        const updates = (Array.isArray(data.recentUpdates) ? data.recentUpdates : []).slice().reverse();
+        const updates = Array.isArray(data.recentUpdates) ? data.recentUpdates : [];
         const snapshot = JSON.stringify({ title: data.title || 'Great Runs', runs, recentUpdates: updates });
         if (previousBoardSnapshot !== null && snapshot !== previousBoardSnapshot) {
           playUpdateDing();
@@ -487,9 +487,9 @@
       }
     }
 
-    let updateViewMode = 'scroll';
+    let updateViewMode = 'pages';
     let updatePage = 0;
-    const updatesPerPage = 5;
+    const updatesPerPage = 1;
     const pageControls = document.querySelector('#page-controls');
     const pageNumber = document.querySelector('#page-number');
     const previousPage = document.querySelector('#previous-page');
