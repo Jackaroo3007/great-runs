@@ -121,6 +121,7 @@
       .run-card {
         display: grid;
         grid-template-columns: 1fr auto;
+        grid-template-columns: minmax(0, 1fr) minmax(150px, 220px);
         align-items: center;
         gap: 18px;
         padding: 24px;
@@ -136,6 +137,13 @@
       .target { text-align: right; font-size: clamp(30px, 4.5vw, 48px); font-weight: 800; letter-spacing: -.07em; }
       .target small { display: block; margin-top: 2px; color: var(--muted); font: 9px var(--mono); letter-spacing: .09em; }
       .empty { padding: 22px 24px; color: var(--muted); font-size: 14px; }
+      .empty { padding: 22px 24px; color: var(--muted); font-size: 14px; }
+
+      .target-progress { display: block; width: min(100%, 170px); height: 7px; margin: 9px 0 0 auto; overflow: hidden; border: 1px solid #31527a; background: #08111e; }
+      .target-progress-fill { display: block; height: 100%; background: linear-gradient(90deg, #70dfd1, #c9f36a); box-shadow: 0 0 10px #70dfd188; }
+      .live-card .target-progress { margin-left: 0; }
+      .difficulty-tag { display: inline-block; margin-top: 9px; padding: 5px 8px; border: 1px solid #3c5577; color: #c2d4f1; font: 700 9px/1.3 var(--mono); letter-spacing: .08em; }
+      .run-data-note { margin: 12px 0 0; color: var(--muted); font: 10px/1.6 var(--mono); }
   
       .live-section { margin: 36px 0 0; }
       .live-section[hidden] { display: none; }
@@ -319,6 +327,7 @@
         font: 700 12px/1.5 var(--mono);
         letter-spacing: .2em;
         text-transform: uppercase;
+       
       }
       .run-card .runner {
         grid-row: 3;
@@ -354,6 +363,7 @@
       }
       .live-card:hover { transform: none; border-color: var(--teal); background: #111e38; }
       .live-card .game { color: #ff78a5; font: 700 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+      .live-card .game { color: #ff78a5; font: 700 11px/1.4 var(--mono); letter-spacing: .12em; }
       .live-card .target { color: var(--teal); text-shadow: none; }
   
       .updates { padding: 30px 32px 24px; }
@@ -401,6 +411,7 @@
         font: 10px var(--mono);
         letter-spacing: .14em;
         text-transform: uppercase;
+       
       }
   
       .stream-link {
@@ -725,6 +736,8 @@
         </div>
         <p class="board-summary" id="board-summary" aria-live="polite">Loading summary…</p>
         <div class="run-list" id="run-list"><p class="empty">Loading targets…</p></div>
+        <div class="run-list" id="run-list"><p class="empty">Loading targets…</p></div>
+        <p class="run-data-note">Set each run's <code>difficulty</code> in runs.json, such as “Top 1” or “Predicted Top 1”. Bars show the target percentage.</p>
       </section>
   
             <section class="updates change-section" id="percentage-changes" aria-labelledby="percentage-changes-heading">
@@ -857,6 +870,30 @@
         oscillator.stop(now + 0.43);
       }
   
+      function appendDifficultyTag(container, difficulty) {
+        if (typeof difficulty !== 'string' || !difficulty.trim()) return;
+        const tag = document.createElement('span');
+        tag.className = 'difficulty-tag';
+        tag.textContent = difficulty.trim();
+        container.append(tag);
+      }
+
+      function createTargetProgress(targetValue) {
+        const progress = document.createElement('span');
+        const fill = document.createElement('span');
+        const parsedPercent = Number.parseFloat(String(targetValue || ''));
+        const percent = Number.isFinite(parsedPercent) ? Math.max(0, Math.min(100, parsedPercent)) : 0;
+        progress.className = 'target-progress';
+        progress.setAttribute('role', 'progressbar');
+        progress.setAttribute('aria-label', 'Target percentage');
+        progress.setAttribute('aria-valuemin', '0');
+        progress.setAttribute('aria-valuemax', '100');
+        progress.setAttribute('aria-valuenow', String(percent));
+        fill.className = 'target-progress-fill';
+        fill.style.width = percent + '%';
+        progress.append(fill);
+        return progress;
+      }
       function appendStreamLink(card, run) {
         if (!run.live || typeof run.streamUrl !== 'string' || !run.streamUrl.trim()) return;
   
@@ -990,10 +1027,13 @@
             runner.className = 'runner';
             runner.textContent = run.runner || 'Runner not set';
             details.append(game, runner);
+            details.append(game, runner);
+            appendDifficultyTag(details, run.difficulty);
             target.className = 'target';
             target.textContent = run.target || '—';
             label.textContent = 'TARGET';
             target.append(label);
+            target.append(createTargetProgress(run.target), label);
             card.append(details, target);
             appendStreamLink(card, run);
             liveGrid.append(card);
@@ -1028,10 +1068,13 @@
             runner.className = 'runner';
             runner.textContent = run.runner || 'Runner not set';
             details.append(game, runner);
+            details.append(game, runner);
+            appendDifficultyTag(details, run.difficulty);
             target.className = 'target';
             target.textContent = run.target || '—';
             label.textContent = 'TARGET';
             target.append(label);
+            target.append(createTargetProgress(run.target), label);
             card.append(details, target);
             appendStreamLink(card, run);
             runList.append(card);
