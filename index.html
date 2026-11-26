@@ -198,7 +198,7 @@
 <body>
   <main class="shell">
     <header class="topbar">
-      <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.2.1</a>
+      <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.2.1b</a>
       <span class="meta"><span class="dot"></span>XP DROP TARGETS</span>
     </header>
 
@@ -249,13 +249,50 @@
     </section>
 
     <footer>
-      <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.2.1</a>
+      <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.2.1b</a>
       <span>XP DROP TARGETS</span>
       <a class="back" href="#top">BACK TO TOP ↑</a>
     </footer>
   </main>
 
   <script>
+    let audioContext;
+    let previousBoardSnapshot = null;
+
+    function unlockUpdateSound() {
+      if (!audioContext) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        audioContext = new AudioContextClass();
+      }
+
+      if (audioContext.state === 'suspended') {
+        audioContext.resume().catch(() => {});
+      }
+    }
+
+    window.addEventListener('pointerdown', unlockUpdateSound, { once: true });
+    window.addEventListener('keydown', unlockUpdateSound, { once: true });
+
+    function playUpdateDing() {
+      if (!audioContext || audioContext.state !== 'running') return;
+
+      const now = audioContext.currentTime;
+      const oscillator = audioContext.createOscillator();
+      const volume = audioContext.createGain();
+
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, now);
+      oscillator.frequency.setValueAtTime(1175, now + 0.12);
+      volume.gain.setValueAtTime(0.0001, now);
+      volume.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
+      volume.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
+      oscillator.connect(volume);
+      volume.connect(audioContext.destination);
+      oscillator.start(now);
+      oscillator.stop(now + 0.43);
+    }
+
     async function loadBoard() {
       const runList = document.querySelector('#run-list');
       const liveSection = document.querySelector('#live-section');
@@ -269,6 +306,11 @@
         const data = await response.json();
         const runs = Array.isArray(data.runs) ? data.runs : [];
         const updates = Array.isArray(data.recentUpdates) ? data.recentUpdates : [];
+        const snapshot = JSON.stringify({ title: data.title || 'Great Runs', runs, recentUpdates: updates });
+        if (previousBoardSnapshot !== null && snapshot !== previousBoardSnapshot) {
+          playUpdateDing();
+        }
+        previousBoardSnapshot = snapshot;
         const getPercentage = (target) => Number.parseFloat(String(target || '0')) || 0;
         const sortedRuns = [...runs].sort((a, b) => getPercentage(b.target) - getPercentage(a.target));
         const liveRuns = sortedRuns.filter((run) => run.live);
