@@ -1,713 +1,810 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#090d12">
-  <title>Great Runs — XP Drop Targets</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      --ink: #edf2f4;
-      --paper: #090d12;
-      --lime: #c9f36a;
-      --teal: #70dfd1;
-      --line: #263440;
-      --muted: #93a1ad;
-      --mono: ui-monospace, Consolas, monospace;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      min-height: 100vh;
-      margin: 0;
-      background: radial-gradient(ellipse at 50% -20%, #17232e 0, transparent 55%), var(--paper);
-      color: var(--ink);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    .shell { max-width: 1180px; margin: 0 auto; padding: 0 6%; }
-
-    .topbar, footer {
-      display: flex;
-      min-height: 76px;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .brand, .eyebrow, .meta, .kicker, footer {
-      font-family: var(--mono);
-      letter-spacing: .1em;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--ink);
-      font-size: 11px;
-      text-decoration: none;
-    }
-
-    .mark {
-      display: grid;
-      width: 28px;
-      height: 28px;
-      place-items: center;
-      border-radius: 8px;
-      background: var(--lime);
-      color: #111811;
-      font: bold 14px Inter, sans-serif;
-    }
-
-    .meta, .eyebrow, .kicker, footer { font-size: 10px; }
-    .meta, .eyebrow, footer { color: var(--muted); }
-    .dot { display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 12px #c9f36a88; }
-
-    .hero, .updates {
-      border: 1px solid #344553;
-      border-radius: 18px;
-      background: linear-gradient(135deg, #121c25, #0d131a 65%, #17232a);
-      box-shadow: 0 22px 70px #0003;
-    }
-
-    .hero {
-      display: flex;
-      min-height: 360px;
-      margin-top: 34px;
-      padding: 58px 48px 28px;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .eyebrow { margin: 0; }
-
-    .hero h1 {
-      margin: 34px 0;
-      font-size: clamp(64px, 11vw, 136px);
-      font-weight: 800;
-      letter-spacing: -.085em;
-      line-height: .95;
-      white-space: nowrap;
-    }
-
-    .hero h1 span, .target { color: var(--lime); }
-    .intro { margin: 0; color: #b4c0c9; font-size: 14px; line-height: 1.8; }
-
-    .hero-bottom {
-      display: flex;
-      justify-content: space-between;
-      padding-top: 20px;
-      border-top: 1px solid #34424d;
-      color: var(--muted);
-      font: 10px var(--mono);
-      letter-spacing: .08em;
-    }
-
-    .section { padding: 62px 0 80px; }
-    .section-head { display: flex; align-items: end; justify-content: space-between; margin-bottom: 26px; }
-    .section-head h2, .updates-title { margin: 12px 0 0; font-size: clamp(32px, 4.5vw, 54px); letter-spacing: -.06em; }
-    .side-note { color: var(--muted); font: 10px/1.8 var(--mono); text-align: right; }
-
-    .run-list, .update-list {
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: #0d1319;
-    }
-
-    .run-card {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      gap: 18px;
-      padding: 24px;
-      border-bottom: 1px solid var(--line);
-      transition: background .2s;
-    }
-
-    .run-card:last-child { border-bottom: 0; }
-    .run-card:hover { background: #141e27; }
-    .game { display: flex; align-items: center; font-size: clamp(21px, 3vw, 30px); font-weight: 700; letter-spacing: -.04em; }
-    .runner { margin-top: 5px; color: var(--muted); font-size: 13px; }
-    .live-dot { width: 9px; height: 9px; margin-right: 10px; border-radius: 50%; background: #ff5964; box-shadow: 0 0 12px #ff596488; flex: 0 0 auto; }
-    .target { text-align: right; font-size: clamp(30px, 4.5vw, 48px); font-weight: 800; letter-spacing: -.07em; }
-    .target small { display: block; margin-top: 2px; color: var(--muted); font: 9px var(--mono); letter-spacing: .09em; }
-    .empty { padding: 22px 24px; color: var(--muted); font-size: 14px; }
-
-    .live-section { margin: 36px 0 0; }
-    .live-section[hidden] { display: none; }
-    .live-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
-    .live-card { min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #0d1319; }
-    .live-card .game { font-size: 15px; }
-    .live-card .runner { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .live-card .target { margin-top: 14px; text-align: left; font-size: 26px; }
-
-    .updates { padding: 38px 40px 28px; }
-    .kicker { display: flex; align-items: center; gap: 13px; color: var(--lime); }
-    .star { font-size: 19px; }
-    .rule { height: 1px; flex: 1; background: #35464e; }
-    .updates-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 10%; padding: 38px 0; }
-    .updates-title { margin-top: 15px; line-height: 1; }
-    .updates-title span, .date { color: var(--teal); }
-    .update-view-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-    .view-switch, .page-controls { display: flex; align-items: center; gap: 6px; }
-    .page-controls[hidden] { display: none; }
-    .view-button, .page-button { border: 1px solid var(--line); border-radius: 8px; background: #0d1319; color: var(--muted); font: 10px var(--mono); cursor: pointer; }
-    .view-button { padding: 9px 13px; }
-    .page-button { width: 34px; height: 32px; font-size: 15px; }
-    .view-button:hover, .page-button:hover:not(:disabled), .view-button.active { border-color: var(--lime); color: var(--lime); }
-    .page-button:disabled { opacity: .35; cursor: default; }
-    .page-number { min-width: 48px; color: var(--muted); font: 10px var(--mono); text-align: center; }
-    .update-list { max-height: 430px; overflow-y: auto; padding: 0 18px; scrollbar-color: #40515d #0d1319; }
-    .update-list.paged { max-height: none; overflow: hidden; }
-    .update { display: grid; grid-template-columns: 100px 1fr; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); }
-    .update:last-child { border-bottom: 0; }
-    .update-new {
-      padding-left: 12px;
-      border-left: 2px solid var(--lime);
-      background: linear-gradient(90deg, #c9f36a14, transparent 75%);
-    }
-    .update-new .date::after {
-      content: ' · NEW';
-      color: var(--lime);
-      font-size: 8px;
-    }
-    .date { padding-top: 3px; font: 10px var(--mono); }
-    .update-content { min-width: 0; }
-    .update-title { margin: 0 0 6px; color: var(--ink); font-size: 14px; line-height: 1.4; letter-spacing: -.02em; }
-    .update-text { margin: 0; color: #dbe3e8; font-size: 13px; line-height: 1.7; white-space: pre-line; }
-    .hint { padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: 10px var(--mono); }
-    .hint code { color: var(--lime); }
-
-    footer { min-height: 78px; border: 0; }
-    .back { color: inherit; text-decoration: none; }
-
-    @media (max-width: 1000px) {
-      .live-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    }
-
-    @media (max-width: 650px) {
-      .shell { padding: 0 5%; }
-      .hero { min-height: 340px; margin-top: 22px; padding: 40px 24px 22px; }
-      .hero h1 { font-size: clamp(48px, 12vw, 78px); }
-      .hero-bottom { font-size: 8px; }
-      .section { padding: 48px 0 55px; }
-      .section-head { align-items: start; gap: 12px; }
-      .side-note { font-size: 8px; }
-      .run-card { grid-template-columns: 1fr auto; gap: 11px; padding: 20px 14px; }
-      .live-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
-      .live-card { padding: 13px; }
-      .updates { padding: 30px 22px 24px; }
-      .updates-grid { grid-template-columns: 1fr; gap: 20px; padding: 28px 0; }
-      .updates-title br { display: none; }
-      .update { grid-template-columns: 76px 1fr; gap: 12px; }
-      .update-list { padding: 0 13px; }
-      footer { flex-wrap: wrap; gap: 10px; padding: 18px 0; }
-    }
-
-    @media (max-width: 360px) {
-      .live-grid { grid-template-columns: 1fr; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .run-card { transition: none; }
-    }
-
-
-    /* Navy arcade tiles inspired by the reference */
-    :root {
-      --ink: #e9f0ff;
-      --paper: #091326;
-      --lime: #ff4d87;
-      --teal: #74aaff;
-      --line: #29415f;
-      --muted: #7895bd;
-    }
-
-    body {
-      background:
-        repeating-linear-gradient(0deg, #0c172a 0 2px, #0a1426 2px 4px);
-      color: var(--ink);
-      font-family: var(--mono);
-    }
-
-    .topbar, footer { border-color: #203653; }
-    .brand { letter-spacing: .14em; }
-    .mark { border-radius: 2px; background: var(--lime); color: #10182b; box-shadow: none; transform: none; }
-    .dot { background: var(--teal); box-shadow: 0 0 10px #74aaff88; }
-
-    .hero, .updates {
-      border: 2px solid #203958;
-      border-radius: 2px;
-      background: #0c1830;
-      box-shadow: inset 0 0 0 2px #070d1a;
-    }
-
-    .hero {
-      min-height: 290px;
-      padding: 38px 34px 24px;
-      background: linear-gradient(135deg, #101d36, #0b172d);
-    }
-
-    .hero h1 {
-      margin: 24px 0;
-      color: #e9f0ff;
-      font-family: var(--mono);
-      font-size: clamp(48px, 9vw, 96px);
-      letter-spacing: -.08em;
-      -webkit-text-stroke: 0;
-      text-shadow: none;
-    }
-
-    .hero h1 span { color: var(--lime); }
-    .intro { color: #a9bbd8; }
-    .hero-bottom { border-color: #203958; }
-
-    .section-head h2, .updates-title { font-family: var(--mono); }
-    .side-note { color: #7895bd; }
-
-    .run-list {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      overflow: visible;
-      border: 0;
-      border-radius: 0;
-      background: transparent;
-    }
-
-    .run-card {
-      min-height: 132px;
-      display: grid;
-      grid-template-columns: 1fr;
-      align-content: center;
-      justify-items: center;
-      gap: 5px;
-      padding: 18px 12px;
-      border: 2px solid #203958;
-      border-radius: 2px;
-      background: #0d1930;
-      box-shadow: inset 0 0 0 2px #070d1a;
-      text-align: center;
-      transition: border-color .15s, background .15s;
-    }
-
-    .run-card:last-child { border-bottom: 2px solid #203958; }
-    .run-card:hover { border-color: var(--lime); background: #111e38; }
-    .run-card > div:first-child { display: contents; }
-    .run-card .game {
-      grid-row: 2;
-      justify-content: center;
-      color: #ff78a5;
-      font: 700 12px/1.5 var(--mono);
-      letter-spacing: .2em;
-      text-transform: uppercase;
-    }
-    .run-card .runner {
-      grid-row: 3;
-      margin: 0;
-      color: #86a9df;
-      font-size: 11px;
-      letter-spacing: .08em;
-    }
-    .run-card .target {
-      grid-row: 1;
-      text-align: center;
-      color: var(--teal);
-      font: 700 22px/1.2 var(--mono);
-      letter-spacing: .04em;
-      text-shadow: none;
-    }
-    .run-card .target::before {
-      content: '↓';
-      display: block;
-      margin-bottom: 7px;
-      color: var(--lime);
-      font: 700 22px/1 var(--mono);
-    }
-    .run-card .target small { margin-top: 4px; color: #7895bd; font-size: 8px; }
-    .live-dot { box-shadow: 0 0 0 3px #ff596422; }
-
-    .live-card {
-      border: 2px solid #203958;
-      border-radius: 2px;
-      background: #0d1930;
-      box-shadow: inset 0 0 0 2px #070d1a;
-      transition: border-color .15s, background .15s;
-    }
-    .live-card:hover { transform: none; border-color: var(--teal); background: #111e38; }
-    .live-card .game { color: #ff78a5; font: 700 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
-    .live-card .target { color: var(--teal); text-shadow: none; }
-
-    .updates { padding: 30px 32px 24px; }
-    .kicker { color: var(--lime); }
-    .star { color: var(--teal); }
-    .rule { background: #29415f; }
-    .update-list { border: 2px solid #203958; border-radius: 2px; background: #0d1930; }
-    .update { border-color: #203958; }
-    .update-title { color: #ff78a5; font-family: var(--mono); letter-spacing: .08em; }
-    .update-text { color: #c5d2e8; }
-    .date { color: var(--teal); }
-    .update-new { border-left-color: var(--lime); background: linear-gradient(90deg, #ff4d871c, transparent 80%); }
-    .update-new .date::after { color: var(--lime); }
-
-    .view-button, .page-button {
-      border: 2px solid #203958;
-      border-radius: 2px;
-      background: #0d1930;
-      color: #86a9df;
-      font-family: var(--mono);
-      letter-spacing: .12em;
-    }
-    .view-button.active { border-color: var(--lime); color: var(--lime); background: #111e38; }
-    .view-button:hover, .page-button:hover:not(:disabled) { border-color: var(--teal); color: var(--teal); }
-    .page-number { color: #86a9df; font-family: var(--mono); }
-
-    @media (max-width: 650px) {
-      .hero { min-height: 250px; padding: 30px 22px 20px; }
-      .run-card { grid-template-columns: 1fr; padding: 16px 8px; }
-      .updates { padding: 24px 18px; }
-    }
-
-    @media (max-width: 420px) {
-      .run-list { grid-template-columns: 1fr; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .run-card, .live-card, .view-button, .page-button { transition: none; }
-    }
-
-  </style>
-</head>
-<body>
-  <main class="shell">
-    <header class="topbar">
-      <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.2.4</a>
-      <span class="meta"><span class="dot"></span>XP DROP TARGETS</span>
-    </header>
-
-    <section class="hero" id="top">
-      <div>
-        <p class="eyebrow">THE DROP BOARD — RUN REQUIREMENTS</p>
-        <h1>GREAT <span>RUNS</span></h1>
-        <p class="intro">The runs needed to trigger an XP drop.<br>These are targets to reach, not completed runs.</p>
-      </div>
-      <div class="hero-bottom">
-        <span>XP DROP REQUIREMENTS</span>
-        <span>SCROLL TO EXPLORE ↓</span>
-      </div>
-    </section>
-
-    <section class="live-section" id="live-section" aria-labelledby="live-heading" hidden>
-      <div class="section-head">
+  <!doctype html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#090d12">
+    <title>Great Runs — XP Drop Targets</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #edf2f4;
+        --paper: #090d12;
+        --lime: #c9f36a;
+        --teal: #70dfd1;
+        --line: #263440;
+        --muted: #93a1ad;
+        --mono: ui-monospace, Consolas, monospace;
+      }
+  
+      * { box-sizing: border-box; }
+  
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background: radial-gradient(ellipse at 50% -20%, #17232e 0, transparent 55%), var(--paper);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+  
+      .shell { max-width: 1180px; margin: 0 auto; padding: 0 6%; }
+  
+      .topbar, footer {
+        display: flex;
+        min-height: 76px;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+      }
+  
+      .brand, .eyebrow, .meta, .kicker, footer {
+        font-family: var(--mono);
+        letter-spacing: .1em;
+      }
+  
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--ink);
+        font-size: 11px;
+        text-decoration: none;
+      }
+  
+      .mark {
+        display: grid;
+        width: 28px;
+        height: 28px;
+        place-items: center;
+        border-radius: 8px;
+        background: var(--lime);
+        color: #111811;
+        font: bold 14px Inter, sans-serif;
+      }
+  
+      .meta, .eyebrow, .kicker, footer { font-size: 10px; }
+      .meta, .eyebrow, footer { color: var(--muted); }
+      .dot { display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 12px #c9f36a88; }
+  
+      .hero, .updates {
+        border: 1px solid #344553;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #121c25, #0d131a 65%, #17232a);
+        box-shadow: 0 22px 70px #0003;
+      }
+  
+      .hero {
+        display: flex;
+        min-height: 360px;
+        margin-top: 34px;
+        padding: 58px 48px 28px;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+  
+      .eyebrow { margin: 0; }
+  
+      .hero h1 {
+        margin: 34px 0;
+        font-size: clamp(64px, 11vw, 136px);
+        font-weight: 800;
+        letter-spacing: -.085em;
+        line-height: .95;
+        white-space: nowrap;
+      }
+  
+      .hero h1 span, .target { color: var(--lime); }
+      .intro { margin: 0; color: #b4c0c9; font-size: 14px; line-height: 1.8; }
+  
+      .hero-bottom {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 20px;
+        border-top: 1px solid #34424d;
+        color: var(--muted);
+        font: 10px var(--mono);
+        letter-spacing: .08em;
+      }
+  
+      .section { padding: 62px 0 80px; }
+      .section-head { display: flex; align-items: end; justify-content: space-between; margin-bottom: 26px; }
+      .section-head h2, .updates-title { margin: 12px 0 0; font-size: clamp(32px, 4.5vw, 54px); letter-spacing: -.06em; }
+      .side-note { color: var(--muted); font: 10px/1.8 var(--mono); text-align: right; }
+  
+      .run-list, .update-list {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #0d1319;
+      }
+  
+      .run-card {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 18px;
+        padding: 24px;
+        border-bottom: 1px solid var(--line);
+        transition: background .2s;
+      }
+  
+      .run-card:last-child { border-bottom: 0; }
+      .run-card:hover { background: #141e27; }
+      .game { display: flex; align-items: center; font-size: clamp(21px, 3vw, 30px); font-weight: 700; letter-spacing: -.04em; }
+      .runner { margin-top: 5px; color: var(--muted); font-size: 13px; }
+      .live-dot { width: 9px; height: 9px; margin-right: 10px; border-radius: 50%; background: #ff5964; box-shadow: 0 0 12px #ff596488; flex: 0 0 auto; }
+      .target { text-align: right; font-size: clamp(30px, 4.5vw, 48px); font-weight: 800; letter-spacing: -.07em; }
+      .target small { display: block; margin-top: 2px; color: var(--muted); font: 9px var(--mono); letter-spacing: .09em; }
+      .empty { padding: 22px 24px; color: var(--muted); font-size: 14px; }
+  
+      .live-section { margin: 36px 0 0; }
+      .live-section[hidden] { display: none; }
+      .live-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+      .live-card { min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #0d1319; }
+      .live-card .game { font-size: 15px; }
+      .live-card .runner { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .live-card .target { margin-top: 14px; text-align: left; font-size: 26px; }
+  
+      .updates { padding: 38px 40px 28px; }
+      .kicker { display: flex; align-items: center; gap: 13px; color: var(--lime); }
+      .star { font-size: 19px; }
+      .rule { height: 1px; flex: 1; background: #35464e; }
+      .updates-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 10%; padding: 38px 0; }
+      .updates-title { margin-top: 15px; line-height: 1; }
+      .updates-title span, .date { color: var(--teal); }
+      .update-view-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+      .view-switch, .page-controls { display: flex; align-items: center; gap: 6px; }
+      .page-controls[hidden] { display: none; }
+      .view-button, .page-button { border: 1px solid var(--line); border-radius: 8px; background: #0d1319; color: var(--muted); font: 10px var(--mono); cursor: pointer; }
+      .view-button { padding: 9px 13px; }
+      .page-button { width: 34px; height: 32px; font-size: 15px; }
+      .view-button:hover, .page-button:hover:not(:disabled), .view-button.active { border-color: var(--lime); color: var(--lime); }
+      .page-button:disabled { opacity: .35; cursor: default; }
+      .page-number { min-width: 48px; color: var(--muted); font: 10px var(--mono); text-align: center; }
+      .update-list { max-height: 430px; overflow-y: auto; padding: 0 18px; scrollbar-color: #40515d #0d1319; }
+      .update-list.paged { max-height: none; overflow: hidden; }
+      .update { display: grid; grid-template-columns: 100px 1fr; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+      .update:last-child { border-bottom: 0; }
+      .update-new {
+        padding-left: 12px;
+        border-left: 2px solid var(--lime);
+        background: linear-gradient(90deg, #c9f36a14, transparent 75%);
+      }
+      .update-new .date::after {
+        content: ' · NEW';
+        color: var(--lime);
+        font-size: 8px;
+      }
+      .date { padding-top: 3px; font: 10px var(--mono); }
+      .update-content { min-width: 0; }
+      .update-title { margin: 0 0 6px; color: var(--ink); font-size: 14px; line-height: 1.4; letter-spacing: -.02em; }
+      .update-text { margin: 0; color: #dbe3e8; font-size: 13px; line-height: 1.7; white-space: pre-line; }
+      .hint { padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font: 10px var(--mono); }
+      .hint code { color: var(--lime); }
+  
+      footer { min-height: 78px; border: 0; }
+      .back { color: inherit; text-decoration: none; }
+  
+      @media (max-width: 1000px) {
+        .live-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      }
+  
+      @media (max-width: 650px) {
+        .shell { padding: 0 5%; }
+        .hero { min-height: 340px; margin-top: 22px; padding: 40px 24px 22px; }
+        .hero h1 { font-size: clamp(48px, 12vw, 78px); }
+        .hero-bottom { font-size: 8px; }
+        .section { padding: 48px 0 55px; }
+        .section-head { align-items: start; gap: 12px; }
+        .side-note { font-size: 8px; }
+        .run-card { grid-template-columns: 1fr auto; gap: 11px; padding: 20px 14px; }
+        .live-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+        .live-card { padding: 13px; }
+        .updates { padding: 30px 22px 24px; }
+        .updates-grid { grid-template-columns: 1fr; gap: 20px; padding: 28px 0; }
+        .updates-title br { display: none; }
+        .update { grid-template-columns: 76px 1fr; gap: 12px; }
+        .update-list { padding: 0 13px; }
+        footer { flex-wrap: wrap; gap: 10px; padding: 18px 0; }
+      }
+  
+      @media (max-width: 360px) {
+        .live-grid { grid-template-columns: 1fr; }
+      }
+  
+      @media (prefers-reduced-motion: reduce) {
+        .run-card { transition: none; }
+      }
+  
+  
+      /* Navy arcade tiles inspired by the reference */
+      :root {
+        --ink: #e9f0ff;
+        --paper: #091326;
+        --lime: #ff4d87;
+        --teal: #74aaff;
+        --line: #29415f;
+        --muted: #7895bd;
+      }
+  
+      body {
+        background:
+          repeating-linear-gradient(0deg, #0c172a 0 2px, #0a1426 2px 4px);
+        color: var(--ink);
+        font-family: var(--mono);
+      }
+  
+      .topbar, footer { border-color: #203653; }
+      .brand { letter-spacing: .14em; }
+      .mark { border-radius: 2px; background: var(--lime); color: #10182b; box-shadow: none; transform: none; }
+      .dot { background: var(--teal); box-shadow: 0 0 10px #74aaff88; }
+  
+      .hero, .updates {
+        border: 2px solid #203958;
+        border-radius: 2px;
+        background: #0c1830;
+        box-shadow: inset 0 0 0 2px #070d1a;
+      }
+  
+      .hero {
+        min-height: 290px;
+        padding: 38px 34px 24px;
+        background: linear-gradient(135deg, #101d36, #0b172d);
+      }
+  
+      .hero h1 {
+        margin: 24px 0;
+        color: #e9f0ff;
+        font-family: var(--mono);
+        font-size: clamp(48px, 9vw, 96px);
+        letter-spacing: -.08em;
+        -webkit-text-stroke: 0;
+        text-shadow: none;
+      }
+  
+      .hero h1 span { color: var(--lime); }
+      .intro { color: #a9bbd8; }
+      .hero-bottom { border-color: #203958; }
+  
+      .section-head h2, .updates-title { font-family: var(--mono); }
+      .side-note { color: #7895bd; }
+  
+      .run-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+      }
+  
+      .run-card {
+        min-height: 132px;
+        display: grid;
+        grid-template-columns: 1fr;
+        align-content: center;
+        justify-items: center;
+        gap: 5px;
+        padding: 18px 12px;
+        border: 2px solid #203958;
+        border-radius: 2px;
+        background: #0d1930;
+        box-shadow: inset 0 0 0 2px #070d1a;
+        text-align: center;
+        transition: border-color .15s, background .15s;
+      }
+  
+      .run-card:last-child { border-bottom: 2px solid #203958; }
+      .run-card:hover { border-color: var(--lime); background: #111e38; }
+      .run-card > div:first-child { display: contents; }
+      .run-card .game {
+        grid-row: 2;
+        justify-content: center;
+        color: #ff78a5;
+        font: 700 12px/1.5 var(--mono);
+        letter-spacing: .2em;
+        text-transform: uppercase;
+      }
+      .run-card .runner {
+        grid-row: 3;
+        margin: 0;
+        color: #86a9df;
+        font-size: 11px;
+        letter-spacing: .08em;
+      }
+      .run-card .target {
+        grid-row: 1;
+        text-align: center;
+        color: var(--teal);
+        font: 700 22px/1.2 var(--mono);
+        letter-spacing: .04em;
+        text-shadow: none;
+      }
+      .run-card .target::before {
+        content: '↓';
+        display: block;
+        margin-bottom: 7px;
+        color: var(--lime);
+        font: 700 22px/1 var(--mono);
+      }
+      .run-card .target small { margin-top: 4px; color: #7895bd; font-size: 8px; }
+      .live-dot { box-shadow: 0 0 0 3px #ff596422; }
+  
+      .live-card {
+        border: 2px solid #203958;
+        border-radius: 2px;
+        background: #0d1930;
+        box-shadow: inset 0 0 0 2px #070d1a;
+        transition: border-color .15s, background .15s;
+      }
+      .live-card:hover { transform: none; border-color: var(--teal); background: #111e38; }
+      .live-card .game { color: #ff78a5; font: 700 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+      .live-card .target { color: var(--teal); text-shadow: none; }
+  
+      .updates { padding: 30px 32px 24px; }
+      .kicker { color: var(--lime); }
+      .star { color: var(--teal); }
+      .rule { background: #29415f; }
+      .update-list { border: 2px solid #203958; border-radius: 2px; background: #0d1930; }
+      .update { border-color: #203958; }
+      .update-title { color: #ff78a5; font-family: var(--mono); letter-spacing: .08em; }
+      .update-text { color: #c5d2e8; }
+      .date { color: var(--teal); }
+      .update-new { border-left-color: var(--lime); background: linear-gradient(90deg, #ff4d871c, transparent 80%); }
+      .update-new .date::after { color: var(--lime); }
+  
+      .view-button, .page-button {
+        border: 2px solid #203958;
+        border-radius: 2px;
+        background: #0d1930;
+        color: #86a9df;
+        font-family: var(--mono);
+        letter-spacing: .12em;
+      }
+      .view-button.active { border-color: var(--lime); color: var(--lime); background: #111e38; }
+      .view-button:hover, .page-button:hover:not(:disabled) { border-color: var(--teal); color: var(--teal); }
+      .page-number { color: #86a9df; font-family: var(--mono); }
+  
+      @media (max-width: 650px) {
+        .hero { min-height: 250px; padding: 30px 22px 20px; }
+        .run-card { grid-template-columns: 1fr; padding: 16px 8px; }
+        .updates { padding: 24px 18px; }
+      }
+  
+      @media (max-width: 420px) {
+        .run-list { grid-template-columns: 1fr; }
+      }
+  
+      @media (prefers-reduced-motion: reduce) {
+        .run-card, .live-card, .view-button, .page-button { transition: none; }
+      }
+  
+  
+      .board-summary {
+        margin: -10px 0 16px;
+        color: #86a9df;
+        font: 10px var(--mono);
+        letter-spacing: .14em;
+        text-transform: uppercase;
+      }
+  
+      .stream-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        grid-column: 1 / -1;
+        grid-row: 4;
+        margin-top: 5px;
+        padding: 7px 10px;
+        border: 1px solid var(--lime);
+        color: var(--lime);
+        font: 700 9px var(--mono);
+        letter-spacing: .12em;
+        text-decoration: none;
+      }
+      .stream-link:hover { background: #ff4d871a; }
+  
+      .topbar .meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .refresh-setting { display: inline-flex; align-items: center; gap: 6px; color: #86a9df; font: 9px var(--mono); white-space: nowrap; }
+      .refresh-select {
+        max-width: 86px;
+        padding: 5px 6px;
+        border: 1px solid #203958;
+        border-radius: 2px;
+        background: #0d1930;
+        color: var(--lime);
+        font: 9px var(--mono);
+      }
+      .refresh-timer { color: var(--teal); font: 9px var(--mono); letter-spacing: .08em; white-space: nowrap; }
+      @media (max-width: 650px) {
+        .topbar .meta { justify-content: flex-end; gap: 6px; font-size: 8px; }
+        .refresh-setting, .refresh-timer { font-size: 8px; }
+        .stream-link { font-size: 8px; }
+      }
+  
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.2.4</a>
+        <span class="meta"><span class="dot"></span>XP DROP TARGETS</span>
+      </header>
+  
+      <section class="hero" id="top">
         <div>
-          <p class="eyebrow">LIVE RIGHT NOW</p>
-          <h2 id="live-heading">Currently live</h2>
+          <p class="eyebrow">THE DROP BOARD — RUN REQUIREMENTS</p>
+          <h1>GREAT <span>RUNS</span></h1>
+          <p class="intro">The runs needed to trigger an XP drop.<br>These are targets to reach, not completed runs.</p>
         </div>
-        <p class="side-note">Targets currently marked<br>as live.</p>
-      </div>
-      <div class="live-grid" id="live-grid"></div>
-    </section>
-
-    <section class="section" aria-labelledby="runs-heading">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">CURRENT TARGETS</p>
-          <h2 id="runs-heading">Runs to get<span id="run-count" class="eyebrow"></span></h2>
+        <div class="hero-bottom">
+          <span>XP DROP REQUIREMENTS</span>
+          <span>SCROLL TO EXPLORE ↓</span>
         </div>
-        <p class="side-note">Reach these run goals<br>to trigger an XP drop.</p>
-      </div>
-      <div class="run-list" id="run-list"><p class="empty">Loading targets…</p></div>
-    </section>
-
-    <section class="updates" aria-labelledby="updates-heading">
-      <div class="kicker"><span class="star">✳</span><span>WHAT'S NEW</span><span class="rule"></span></div>
-      <div class="updates-grid">
-        <div>
-          <p class="eyebrow">THE LATEST</p>
-          <h2 id="updates-heading" class="updates-title">Update logs<span>.</span></h2>
-        </div>
-        <div>
-          <div class="update-view-controls" aria-label="Update log view">
-            <div class="view-switch" role="group" aria-label="Choose update log layout">
-              <button class="view-button" type="button" data-view="scroll" aria-pressed="false">Scroll</button>
-              <button class="view-button active" type="button" data-view="pages" aria-pressed="true">Pages</button>
-            </div>
-            <div class="page-controls" id="page-controls" hidden>
-              <button class="page-button" id="previous-page" type="button" aria-label="Previous page">←</button>
-              <span class="page-number" id="page-number">1 / 1</span>
-              <button class="page-button" id="next-page" type="button" aria-label="Next page">→</button>
-            </div>
+      </section>
+  
+      <section class="live-section" id="live-section" aria-labelledby="live-heading" hidden>
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">LIVE RIGHT NOW</p>
+            <h2 id="live-heading">Currently live</h2>
           </div>
-          <div class="update-list" id="update-list"><p class="empty">Loading update logs…</p></div>
+          <p class="side-note">Targets currently marked<br>as live.</p>
         </div>
-      </div>
-      <p class="hint">Use title for headings and a text array for separate lines in <code>runs.json</code>.</p>
-    </section>
-
-    <footer>
-      <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.2.3</a>
-      <span>XP DROP TARGETS</span>
-      <a class="back" href="#top">BACK TO TOP ↑</a>
-    </footer>
-  </main>
-
-  <script>
-    let audioContext;
-    let previousBoardSnapshot = null;
-
-    function unlockUpdateSound() {
-      if (!audioContext) {
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContextClass) return;
-        audioContext = new AudioContextClass();
-      }
-
-      if (audioContext.state === 'suspended') {
-        audioContext.resume().catch(() => {});
-      }
-    }
-
-    window.addEventListener('pointerdown', unlockUpdateSound, { once: true });
-    window.addEventListener('keydown', unlockUpdateSound, { once: true });
-
-    function playUpdateDing() {
-      if (!audioContext || audioContext.state !== 'running') return;
-
-      const now = audioContext.currentTime;
-      const oscillator = audioContext.createOscillator();
-      const volume = audioContext.createGain();
-
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(880, now);
-      oscillator.frequency.setValueAtTime(1175, now + 0.12);
-      volume.gain.setValueAtTime(0.0001, now);
-      volume.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
-      volume.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
-      oscillator.connect(volume);
-      volume.connect(audioContext.destination);
-      oscillator.start(now);
-      oscillator.stop(now + 0.43);
-    }
-
-    async function loadBoard() {
-      const runList = document.querySelector('#run-list');
-      const liveSection = document.querySelector('#live-section');
-      const liveGrid = document.querySelector('#live-grid');
-      const updateList = document.querySelector('#update-list');
-
-      try {
-        const response = await fetch('./runs.json', { cache: 'no-store' });
-        if (!response.ok) throw new Error('Could not load runs.json');
-
-        const data = await response.json();
-        const runs = Array.isArray(data.runs) ? data.runs : [];
-        const updates = Array.isArray(data.recentUpdates) ? data.recentUpdates : [];
-        const snapshot = JSON.stringify({ title: data.title || 'Great Runs', runs, recentUpdates: updates });
-        if (previousBoardSnapshot !== null && snapshot !== previousBoardSnapshot) {
-          playUpdateDing();
+        <div class="live-grid" id="live-grid"></div>
+      </section>
+  
+      <section class="section" aria-labelledby="runs-heading">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">CURRENT TARGETS</p>
+            <h2 id="runs-heading">Runs to get<span id="run-count" class="eyebrow"></span></h2>
+          </div>
+          <p class="side-note">Reach these run goals<br>to trigger an XP drop.</p>
+        </div>
+        <p class="board-summary" id="board-summary" aria-live="polite">Loading summary…</p>
+        <div class="run-list" id="run-list"><p class="empty">Loading targets…</p></div>
+      </section>
+  
+      <section class="updates" aria-labelledby="updates-heading">
+        <div class="kicker"><span class="star">✳</span><span>WHAT'S NEW</span><span class="rule"></span></div>
+        <div class="updates-grid">
+          <div>
+            <p class="eyebrow">THE LATEST</p>
+            <h2 id="updates-heading" class="updates-title">Update logs<span>.</span></h2>
+          </div>
+          <div>
+            <div class="update-view-controls" aria-label="Update log view">
+              <div class="view-switch" role="group" aria-label="Choose update log layout">
+                <button class="view-button" type="button" data-view="scroll" aria-pressed="false">Scroll</button>
+                <button class="view-button active" type="button" data-view="pages" aria-pressed="true">Pages</button>
+              </div>
+              <div class="page-controls" id="page-controls" hidden>
+                <button class="page-button" id="previous-page" type="button" aria-label="Previous page">←</button>
+                <span class="page-number" id="page-number">1 / 1</span>
+                <button class="page-button" id="next-page" type="button" aria-label="Next page">→</button>
+              </div>
+            </div>
+            <div class="update-list" id="update-list"><p class="empty">Loading update logs…</p></div>
+          </div>
+        </div>
+        <p class="hint">Use title for headings and a text array for separate lines in <code>runs.json</code>.</p>
+      </section>
+  
+      <footer>
+        <a class="brand" href="#top"><span class="mark">G</span> GREAT RUNS - v0.2.3</a>
+        <span>XP DROP TARGETS</span>
+        <a class="back" href="#top">BACK TO TOP ↑</a>
+      </footer>
+    </main>
+  
+    <script>
+      let audioContext;
+      let previousBoardSnapshot = null;
+  
+      function unlockUpdateSound() {
+        if (!audioContext) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          audioContext = new AudioContextClass();
         }
-        previousBoardSnapshot = snapshot;
-        const getPercentage = (target) => Number.parseFloat(String(target || '0')) || 0;
-        const sortedRuns = [...runs].sort((a, b) => getPercentage(b.target) - getPercentage(a.target));
-        const liveRuns = sortedRuns.filter((run) => run.live);
-
-        document.title = (data.title || 'Great Runs') + ' — XP Drop Targets';
-        document.querySelector('#run-count').textContent = '  ' + String(runs.length).padStart(2, '0');
-
-        liveGrid.replaceChildren();
-        liveSection.hidden = liveRuns.length === 0;
-        liveRuns.forEach((run) => {
-          const card = document.createElement('article');
-          const details = document.createElement('div');
-          const game = document.createElement('div');
-          const liveDot = document.createElement('span');
-          const runner = document.createElement('div');
-          const target = document.createElement('div');
-          const label = document.createElement('small');
-
-          card.className = 'live-card';
-          game.className = 'game';
-          game.textContent = run.game || 'Untitled game';
-          liveDot.className = 'live-dot';
-          liveDot.setAttribute('role', 'img');
-          liveDot.setAttribute('aria-label', 'Live');
-          liveDot.title = 'Live';
-          game.prepend(liveDot);
-          runner.className = 'runner';
-          runner.textContent = run.runner || 'Runner not set';
-          details.append(game, runner);
-          target.className = 'target';
-          target.textContent = run.target || '—';
-          label.textContent = 'TARGET';
-          target.append(label);
-          card.append(details, target);
-          liveGrid.append(card);
-        });
-
-        runList.replaceChildren();
-        if (!sortedRuns.length) {
-          runList.innerHTML = '<p class="empty">No XP drop targets yet. Add one in runs.json.</p>';
+  
+        if (audioContext.state === 'suspended') {
+          audioContext.resume().catch(() => {});
         }
-
-        sortedRuns.forEach((run) => {
-          const card = document.createElement('article');
-          const details = document.createElement('div');
-          const game = document.createElement('div');
-          const runner = document.createElement('div');
-          const target = document.createElement('div');
-          const label = document.createElement('small');
-
-          card.className = 'run-card';
-          game.className = 'game';
-          game.textContent = run.game || 'Untitled game';
-
-          if (run.live) {
+      }
+  
+      window.addEventListener('pointerdown', unlockUpdateSound, { once: true });
+      window.addEventListener('keydown', unlockUpdateSound, { once: true });
+  
+      function playUpdateDing() {
+        if (!audioContext || audioContext.state !== 'running') return;
+  
+        const now = audioContext.currentTime;
+        const oscillator = audioContext.createOscillator();
+        const volume = audioContext.createGain();
+  
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(880, now);
+        oscillator.frequency.setValueAtTime(1175, now + 0.12);
+        volume.gain.setValueAtTime(0.0001, now);
+        volume.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
+        volume.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
+        oscillator.connect(volume);
+        volume.connect(audioContext.destination);
+        oscillator.start(now);
+        oscillator.stop(now + 0.43);
+      }
+  
+      function appendStreamLink(card, run) {
+        if (!run.live || typeof run.streamUrl !== 'string' || !run.streamUrl.trim()) return;
+  
+        let streamUrl;
+        try {
+          streamUrl = new URL(run.streamUrl, window.location.href);
+        } catch {
+          return;
+        }
+        if (!['https:', 'http:'].includes(streamUrl.protocol)) return;
+  
+        const link = document.createElement('a');
+        link.className = 'stream-link';
+        link.href = streamUrl.href;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = 'WATCH STREAM ↗';
+        card.append(link);
+      }
+  
+      async function loadBoard() {
+        const runList = document.querySelector('#run-list');
+        const liveSection = document.querySelector('#live-section');
+        const liveGrid = document.querySelector('#live-grid');
+        const updateList = document.querySelector('#update-list');
+        const boardSummary = document.querySelector('#board-summary');
+  
+        try {
+          const response = await fetch('./runs.json', { cache: 'no-store' });
+          if (!response.ok) throw new Error('Could not load runs.json');
+  
+          const data = await response.json();
+          const runs = Array.isArray(data.runs) ? data.runs : [];
+          const updates = Array.isArray(data.recentUpdates) ? data.recentUpdates : [];
+          const snapshot = JSON.stringify({ title: data.title || 'Great Runs', runs, recentUpdates: updates });
+          if (previousBoardSnapshot !== null && snapshot !== previousBoardSnapshot) {
+            playUpdateDing();
+          }
+          previousBoardSnapshot = snapshot;
+          const getPercentage = (target) => Number.parseFloat(String(target || '0')) || 0;
+          const sortedRuns = [...runs].sort((a, b) => getPercentage(b.target) - getPercentage(a.target));
+          const liveRuns = sortedRuns.filter((run) => run.live);
+          boardSummary.textContent = runs.length + (runs.length === 1 ? ' XP DROP TARGET' : ' XP DROP TARGETS') + ' · ' + liveRuns.length + ' LIVE';
+  
+          document.title = (data.title || 'Great Runs') + ' — XP Drop Targets';
+          document.querySelector('#run-count').textContent = '  ' + String(runs.length).padStart(2, '0');
+  
+          liveGrid.replaceChildren();
+          liveSection.hidden = liveRuns.length === 0;
+          liveRuns.forEach((run) => {
+            const card = document.createElement('article');
+            const details = document.createElement('div');
+            const game = document.createElement('div');
             const liveDot = document.createElement('span');
+            const runner = document.createElement('div');
+            const target = document.createElement('div');
+            const label = document.createElement('small');
+  
+            card.className = 'live-card';
+            game.className = 'game';
+            game.textContent = run.game || 'Untitled game';
             liveDot.className = 'live-dot';
             liveDot.setAttribute('role', 'img');
             liveDot.setAttribute('aria-label', 'Live');
             liveDot.title = 'Live';
             game.prepend(liveDot);
-          }
-
-          runner.className = 'runner';
-          runner.textContent = run.runner || 'Runner not set';
-          details.append(game, runner);
-          target.className = 'target';
-          target.textContent = run.target || '—';
-          label.textContent = 'TARGET';
-          target.append(label);
-          card.append(details, target);
-          runList.append(card);
-        });
-
-        updateList.replaceChildren();
-        const currentUpdateKeys = new Set(updates.map(getUpdateKey));
-
-        if (previousUpdateKeys !== null) {
-          updateRefreshCycle += 1;
-          updates.forEach((entry) => {
-            const key = getUpdateKey(entry);
-            if (!previousUpdateKeys.has(key)) {
-              newUpdateUntil.set(key, updateRefreshCycle + 4);
-            }
+            runner.className = 'runner';
+            runner.textContent = run.runner || 'Runner not set';
+            details.append(game, runner);
+            target.className = 'target';
+            target.textContent = run.target || '—';
+            label.textContent = 'TARGET';
+            target.append(label);
+            card.append(details, target);
+            appendStreamLink(card, run);
+            liveGrid.append(card);
           });
-        }
-
-        previousUpdateKeys = currentUpdateKeys;
-        for (const [key, lastHighlightedCycle] of newUpdateUntil) {
-          if (lastHighlightedCycle < updateRefreshCycle) {
-            newUpdateUntil.delete(key);
+  
+          runList.replaceChildren();
+          if (!sortedRuns.length) {
+            runList.innerHTML = '<p class="empty">No XP drop targets yet. Add one in runs.json.</p>';
           }
-        }
-
-        const pageCount = Math.max(1, Math.ceil(updates.length / updatesPerPage));
-        updatePage = Math.min(updatePage, pageCount - 1);
-        const visibleUpdates = updateViewMode === 'pages'
-          ? updates.slice(updatePage * updatesPerPage, (updatePage + 1) * updatesPerPage)
-          : updates;
-        updateList.classList.toggle('paged', updateViewMode === 'pages');
-        pageControls.hidden = updateViewMode !== 'pages';
-        pageNumber.textContent = updates.length ? (updatePage + 1) + ' / ' + pageCount : '0 / 0';
-        previousPage.disabled = updatePage <= 0 || updates.length === 0;
-        nextPage.disabled = updatePage >= pageCount - 1 || updates.length === 0;
-
-        visibleUpdates.forEach((entry) => {
-          const row = document.createElement('article');
-          const date = document.createElement('time');
-          const content = document.createElement('div');
-          const title = document.createElement('h3');
-          const text = document.createElement('p');
-
-          row.className = 'update';
-          content.className = 'update-content';
-          title.className = 'update-title';
-          title.textContent = typeof entry.title === 'string' ? entry.title : '';
-          const updateKey = getUpdateKey(entry);
-          if (newUpdateUntil.has(updateKey) && updateRefreshCycle <= newUpdateUntil.get(updateKey)) {
-            row.classList.add('update-new');
+  
+          sortedRuns.forEach((run) => {
+            const card = document.createElement('article');
+            const details = document.createElement('div');
+            const game = document.createElement('div');
+            const runner = document.createElement('div');
+            const target = document.createElement('div');
+            const label = document.createElement('small');
+  
+            card.className = 'run-card';
+            game.className = 'game';
+            game.textContent = run.game || 'Untitled game';
+  
+            if (run.live) {
+              const liveDot = document.createElement('span');
+              liveDot.className = 'live-dot';
+              liveDot.setAttribute('role', 'img');
+              liveDot.setAttribute('aria-label', 'Live');
+              liveDot.title = 'Live';
+              game.prepend(liveDot);
+            }
+  
+            runner.className = 'runner';
+            runner.textContent = run.runner || 'Runner not set';
+            details.append(game, runner);
+            target.className = 'target';
+            target.textContent = run.target || '—';
+            label.textContent = 'TARGET';
+            target.append(label);
+            card.append(details, target);
+            appendStreamLink(card, run);
+            runList.append(card);
+          });
+  
+          updateList.replaceChildren();
+          const currentUpdateKeys = new Set(updates.map(getUpdateKey));
+  
+          if (previousUpdateKeys !== null) {
+            updateRefreshCycle += 1;
+            updates.forEach((entry) => {
+              const key = getUpdateKey(entry);
+              if (!previousUpdateKeys.has(key)) {
+                newUpdateUntil.set(key, updateRefreshCycle + 4);
+              }
+            });
           }
-          date.className = 'date';
-          date.dateTime = entry.date || '';
-          date.textContent = entry.date || 'RECENT';
-          text.className = 'update-text';
-          text.textContent = Array.isArray(entry.text) ? entry.text.map((line) => String(line ?? '')).join('\n') : entry.text || 'Update';
-          if (title.textContent) content.append(title);
-          content.append(text);
-          row.append(date, content);
-          updateList.append(row);
-        });
-
-        if (!updateList.childElementCount) {
-          updateList.innerHTML = '<p class="empty">No update logs yet.</p>';
+  
+          previousUpdateKeys = currentUpdateKeys;
+          for (const [key, lastHighlightedCycle] of newUpdateUntil) {
+            if (lastHighlightedCycle < updateRefreshCycle) {
+              newUpdateUntil.delete(key);
+            }
+          }
+  
+          const pageCount = Math.max(1, Math.ceil(updates.length / updatesPerPage));
+          updatePage = Math.min(updatePage, pageCount - 1);
+          const visibleUpdates = updateViewMode === 'pages'
+            ? updates.slice(updatePage * updatesPerPage, (updatePage + 1) * updatesPerPage)
+            : updates;
+          updateList.classList.toggle('paged', updateViewMode === 'pages');
+          pageControls.hidden = updateViewMode !== 'pages';
+          pageNumber.textContent = updates.length ? (updatePage + 1) + ' / ' + pageCount : '0 / 0';
+          previousPage.disabled = updatePage <= 0 || updates.length === 0;
+          nextPage.disabled = updatePage >= pageCount - 1 || updates.length === 0;
+  
+          visibleUpdates.forEach((entry) => {
+            const row = document.createElement('article');
+            const date = document.createElement('time');
+            const content = document.createElement('div');
+            const title = document.createElement('h3');
+            const text = document.createElement('p');
+  
+            row.className = 'update';
+            content.className = 'update-content';
+            title.className = 'update-title';
+            title.textContent = typeof entry.title === 'string' ? entry.title : '';
+            const updateKey = getUpdateKey(entry);
+            if (newUpdateUntil.has(updateKey) && updateRefreshCycle <= newUpdateUntil.get(updateKey)) {
+              row.classList.add('update-new');
+            }
+            date.className = 'date';
+            date.dateTime = entry.date || '';
+            date.textContent = entry.date || 'RECENT';
+            text.className = 'update-text';
+            text.textContent = Array.isArray(entry.text) ? entry.text.map((line) => String(line ?? '')).join('\n') : entry.text || 'Update';
+            if (title.textContent) content.append(title);
+            content.append(text);
+            row.append(date, content);
+            updateList.append(row);
+          });
+  
+          if (!updateList.childElementCount) {
+            updateList.innerHTML = '<p class="empty">No update logs yet.</p>';
+          }
+        } catch (error) {
+          runList.innerHTML = '<p class="empty">Could not load runs.json. Check the JSON format.</p>';
+          liveSection.hidden = true;
+          updateList.replaceChildren();
         }
-      } catch (error) {
-        runList.innerHTML = '<p class="empty">Could not load runs.json. Check the JSON format.</p>';
-        liveSection.hidden = true;
-        updateList.replaceChildren();
       }
-    }
-
-    let updateViewMode = 'pages';
-    let updatePage = 0;
-    const updatesPerPage = 1;
-    const pageControls = document.querySelector('#page-controls');
-    const pageNumber = document.querySelector('#page-number');
-    const previousPage = document.querySelector('#previous-page');
-    const nextPage = document.querySelector('#next-page');
-
-    document.querySelectorAll('.view-button').forEach((button) => {
-      button.addEventListener('click', () => {
-        updateViewMode = button.dataset.view;
-        updatePage = 0;
-        document.querySelectorAll('.view-button').forEach((viewButton) => {
-          const selected = viewButton === button;
-          viewButton.classList.toggle('active', selected);
-          viewButton.setAttribute('aria-pressed', String(selected));
+  
+      let updateViewMode = 'pages';
+      let updatePage = 0;
+      const updatesPerPage = 1;
+      const pageControls = document.querySelector('#page-controls');
+      const pageNumber = document.querySelector('#page-number');
+      const previousPage = document.querySelector('#previous-page');
+      const nextPage = document.querySelector('#next-page');
+  
+      document.querySelectorAll('.view-button').forEach((button) => {
+        button.addEventListener('click', () => {
+          updateViewMode = button.dataset.view;
+          updatePage = 0;
+          document.querySelectorAll('.view-button').forEach((viewButton) => {
+            const selected = viewButton === button;
+            viewButton.classList.toggle('active', selected);
+            viewButton.setAttribute('aria-pressed', String(selected));
+          });
+          loadBoard();
         });
+      });
+  
+      previousPage.addEventListener('click', () => {
+        updatePage = Math.max(0, updatePage - 1);
         loadBoard();
       });
-    });
-
-    previousPage.addEventListener('click', () => {
-      updatePage = Math.max(0, updatePage - 1);
+  
+      nextPage.addEventListener('click', () => {
+        updatePage += 1;
+        loadBoard();
+      });
+  
       loadBoard();
-    });
-
-    nextPage.addEventListener('click', () => {
-      updatePage += 1;
-      loadBoard();
-    });
-
-    loadBoard();
-    let previousUpdateKeys = null;
-    let updateRefreshCycle = 0;
-    const newUpdateUntil = new Map();
-    const getUpdateKey = (entry) => JSON.stringify([entry.date || '', entry.title || '', entry.text || '']);
-
-    const refreshTimer = document.createElement('span');
-    refreshTimer.className = 'refresh-timer';
-    refreshTimer.textContent = 'REFRESH IN 15S';
-    refreshTimer.style.marginLeft = '10px';
-    refreshTimer.style.color = 'var(--lime)';
-    refreshTimer.style.opacity = '.8';
-    document.querySelector('.topbar .meta').append(refreshTimer);
-    let refreshCountdown = 15;
-
-    function updateRefreshTimer() {
-      refreshCountdown = refreshCountdown <= 1 ? 15 : refreshCountdown - 1;
-      refreshTimer.textContent = 'REFRESH IN ' + refreshCountdown + 'S';
-    }
-
-    window.setInterval(updateRefreshTimer, 1000);
-    window.setInterval(() => {
-      refreshCountdown = 15;
-      loadBoard();
-    }, 15_000);
-  </script>
-</body>
-</html>
+      let previousUpdateKeys = null;
+      let updateRefreshCycle = 0;
+      const newUpdateUntil = new Map();
+      const getUpdateKey = (entry) => JSON.stringify([entry.date || '', entry.title || '', entry.text || '']);
+  
+      const refreshMinutes = [10, 15, 20, 30, 45, 60];
+      let selectedRefreshMinutes = 15;
+      let refreshCountdown = selectedRefreshMinutes * 60;
+      const refreshSetting = document.createElement('label');
+      const refreshSelect = document.createElement('select');
+      const refreshTimer = document.createElement('span');
+  
+      refreshSetting.className = 'refresh-setting';
+      refreshSetting.append('UPDATE EVERY ');
+      refreshSelect.className = 'refresh-select';
+      refreshSelect.setAttribute('aria-label', 'Update interval in minutes');
+      refreshMinutes.forEach((minutes) => {
+        const option = document.createElement('option');
+        option.value = String(minutes);
+        option.textContent = minutes + ' MIN';
+        refreshSelect.append(option);
+      });
+      refreshSelect.value = String(selectedRefreshMinutes);
+      refreshSetting.append(refreshSelect);
+  
+      refreshTimer.className = 'refresh-timer';
+      document.querySelector('.topbar .meta').append(refreshSetting, refreshTimer);
+  
+      function formatRefreshCountdown() {
+        const minutes = Math.floor(refreshCountdown / 60);
+        const seconds = refreshCountdown % 60;
+        refreshTimer.textContent = 'REFRESH IN ' + String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+      }
+  
+      refreshSelect.addEventListener('change', () => {
+        selectedRefreshMinutes = Number(refreshSelect.value);
+        refreshCountdown = selectedRefreshMinutes * 60;
+        formatRefreshCountdown();
+      });
+  
+      function updateRefreshTimer() {
+        if (refreshCountdown <= 1) {
+          refreshCountdown = selectedRefreshMinutes * 60;
+          loadBoard();
+        } else {
+          refreshCountdown -= 1;
+        }
+        formatRefreshCountdown();
+      }
+  
+      formatRefreshCountdown();
+      window.setInterval(updateRefreshTimer, 1000);
+    </script>
+  </body>
+  </html>
+  
