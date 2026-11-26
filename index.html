@@ -370,7 +370,25 @@
     }
 
     loadBoard();
-    window.setInterval(loadBoard, 15_000);
+    const refreshTimer = document.createElement('span');
+    refreshTimer.className = 'refresh-timer';
+    refreshTimer.textContent = 'REFRESH IN 15S';
+    refreshTimer.style.marginLeft = '10px';
+    refreshTimer.style.color = 'var(--lime)';
+    refreshTimer.style.opacity = '.8';
+    document.querySelector('.topbar .meta').append(refreshTimer);
+    let refreshCountdown = 15;
+
+    function updateRefreshTimer() {
+      refreshCountdown = refreshCountdown <= 1 ? 15 : refreshCountdown - 1;
+      refreshTimer.textContent = 'REFRESH IN ' + refreshCountdown + 'S';
+    }
+
+    window.setInterval(updateRefreshTimer, 1000);
+    window.setInterval(() => {
+      refreshCountdown = 15;
+      loadBoard();
+    }, 15_000);
   </script>
 </body>
 </html>
