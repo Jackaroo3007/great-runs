@@ -23,7 +23,7 @@
       "game": "Ashley Wave Trials",
       "runner": "Brian Cheese",
       "target": "14%",
-      "live": false,
+      "live": true,
       "streamUrl": "https://www.twitch.tv/brian_cheese"
     }
   ],
