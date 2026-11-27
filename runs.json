@@ -1,6 +1,6 @@
 {
   "title": "Great Runs",
-  "boardStatus": "ONLINE",
+  "boardStatus": "OFFLINE",
   "announcement": {
     "enabled": true,
     "expiresAt": "2026-11-27T01:00:00Z",
@@ -30,13 +30,6 @@
     }
   ],
   "recentUpdates": [
-    {
-      "date": "2026-11-27",
-      "text": [
-        "Refresh your website if it says 0.3.1."
-      ],
-      "title": "URGANT UPDATE"
-    },
     {
       "date": "2026-11-27",
       "text": [
