@@ -27,6 +27,14 @@
       "target": "16%",
       "live": false,
       "streamUrl": "https://www.twitch.tv/brian_cheese"
+    },
+    {
+      "game": "Silent Acropolis",
+      "difficulty": "Predicted Top VON",
+      "runner": "Hover",
+      "target": "50%",
+      "live": false,
+      "streamUrl": "https://www.twitch.tv/gdhover"
     }
   ],
   "recentUpdates": [
@@ -83,6 +91,10 @@
     }
   ],
   "percentageChanges": [
+    {
+      "date": "2026-11-26",
+      "text": "Added the Silent Acropolis XP drop target for GDHover: 50%."
+    },
     {
       "date": "2026-11-26",
       "text": "Ashley Wave Trials XP drop target for Brian Cheese: 18% -> 16%."
